@@ -5,17 +5,170 @@ import os
 import subprocess
 import sys
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from dram_tracker.freshness import decide_collection_need
 from dram_tracker.model import merge_observations
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class ModelAndCollectTests(unittest.TestCase):
+    @staticmethod
+    def _write_status(path: Path, generated_at: str) -> None:
+        path.write_text(json.dumps({"generated_at": generated_at}), encoding="utf-8")
+
+    @staticmethod
+    def _trendforce_daily_spot(date: str, product_id: str = "trendforce-spot-ddr5") -> dict[str, str]:
+        return {
+            "source": "trendforce",
+            "kind": "spot",
+            "cadence": "daily",
+            "date": date,
+            "product_id": product_id,
+        }
+
+    @staticmethod
+    def _write_prices(path: Path, observations: list[dict[str, str]]) -> None:
+        path.write_text(json.dumps({"observations": observations}), encoding="utf-8")
+
+    def test_freshness_decision_skips_when_status_is_current_kst_day(self) -> None:
+        with TemporaryDirectory() as tmp:
+            status = Path(tmp) / "status.json"
+            self._write_status(status, "2026-06-10T02:20:00Z")
+            decision = decide_collection_need(
+                status,
+                now=datetime(2026, 6, 10, 6, 17, tzinfo=timezone.utc),
+            )
+            self.assertFalse(decision.should_collect)
+            self.assertEqual(decision.reason, "fresh")
+            self.assertEqual(decision.today, "2026-06-10")
+            self.assertEqual(decision.generated_date, "2026-06-10")
+
+    def test_freshness_decision_collects_when_status_is_previous_kst_day(self) -> None:
+        with TemporaryDirectory() as tmp:
+            status = Path(tmp) / "status.json"
+            self._write_status(status, "2026-06-09T14:59:00Z")
+            decision = decide_collection_need(
+                status,
+                now=datetime(2026, 6, 10, 2, 17, tzinfo=timezone.utc),
+            )
+            self.assertTrue(decision.should_collect)
+            self.assertEqual(decision.reason, "stale")
+            self.assertEqual(decision.today, "2026-06-10")
+            self.assertEqual(decision.generated_date, "2026-06-09")
+
+    def test_freshness_decision_collects_when_forced_or_missing_status(self) -> None:
+        with TemporaryDirectory() as tmp:
+            missing = Path(tmp) / "status.json"
+            missing_decision = decide_collection_need(
+                missing,
+                now=datetime(2026, 6, 10, 2, 17, tzinfo=timezone.utc),
+            )
+            forced_decision = decide_collection_need(
+                missing,
+                now=datetime(2026, 6, 10, 2, 17, tzinfo=timezone.utc),
+                force=True,
+            )
+            self.assertTrue(missing_decision.should_collect)
+            self.assertEqual(missing_decision.reason, "missing-status")
+            self.assertTrue(forced_decision.should_collect)
+            self.assertEqual(forced_decision.reason, "forced")
+
+    def test_freshness_decision_skips_when_required_daily_date_exists(self) -> None:
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            status = root / "status.json"
+            prices = root / "prices.json"
+            self._write_status(status, "2026-06-11T02:20:00Z")
+            self._write_prices(prices, [self._trendforce_daily_spot("2026-06-10")])
+            decision = decide_collection_need(
+                status,
+                prices_path=prices,
+                require_daily_date="yesterday",
+                now=datetime(2026, 6, 11, 3, 0, tzinfo=timezone.utc),
+            )
+            self.assertFalse(decision.should_collect)
+            self.assertEqual(decision.reason, "fresh-daily-date")
+            self.assertEqual(decision.target_date, "2026-06-10")
+            self.assertEqual(decision.daily_observation_count, 1)
+
+    def test_freshness_decision_collects_when_required_daily_date_is_missing(self) -> None:
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            status = root / "status.json"
+            prices = root / "prices.json"
+            self._write_status(status, "2026-06-10T09:20:00Z")
+            self._write_prices(prices, [self._trendforce_daily_spot("2026-06-09")])
+            decision = decide_collection_need(
+                status,
+                prices_path=prices,
+                require_daily_date="yesterday",
+                now=datetime(2026, 6, 11, 3, 0, tzinfo=timezone.utc),
+            )
+            self.assertTrue(decision.should_collect)
+            self.assertEqual(decision.reason, "missing-daily-date")
+            self.assertEqual(decision.target_date, "2026-06-10")
+            self.assertEqual(decision.daily_observation_count, 0)
+
+
+    def test_freshness_decision_collects_when_daily_count_is_below_minimum(self) -> None:
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            status = root / "status.json"
+            prices = root / "prices.json"
+            self._write_status(status, "2026-06-11T02:20:00Z")
+            self._write_prices(prices, [self._trendforce_daily_spot("2026-06-10")])
+            decision = decide_collection_need(
+                status,
+                prices_path=prices,
+                require_daily_date="yesterday",
+                minimum_daily_spot_rows=2,
+                now=datetime(2026, 6, 11, 3, 0, tzinfo=timezone.utc),
+            )
+            self.assertTrue(decision.should_collect)
+            self.assertEqual(decision.reason, "insufficient-daily-date")
+            self.assertEqual(decision.target_date, "2026-06-10")
+            self.assertEqual(decision.daily_observation_count, 1)
+
+    def test_freshness_cli_can_fail_when_collection_is_still_needed(self) -> None:
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            status = root / "status.json"
+            prices = root / "prices.json"
+            self._write_status(status, "2026-06-11T02:20:00Z")
+            self._write_prices(prices, [])
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "dram_tracker.freshness",
+                    "--status",
+                    str(status),
+                    "--prices",
+                    str(prices),
+                    "--timezone",
+                    "Asia/Seoul",
+                    "--require-daily-date",
+                    "yesterday",
+                    "--minimum-daily-spot-rows",
+                    "2",
+                    "--fail-if-collect-needed",
+                ],
+                cwd=ROOT,
+                env={**os.environ, "PYTHONPATH": str(ROOT / "src")},
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("should_collect=true", result.stdout)
+            self.assertIn("reason=missing-daily-date", result.stdout)
+
     def test_merge_observations_deduplicates_by_source_kind_product_cadence_date(self) -> None:
         old = [{"source": "s", "kind": "spot", "product_id": "p", "cadence": "daily", "date": "2026-06-10", "values": {"average": 1}}]
         new = [{"source": "s", "kind": "spot", "product_id": "p", "cadence": "daily", "date": "2026-06-10", "values": {"average": 2}}]

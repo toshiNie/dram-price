@@ -36,10 +36,10 @@ When available, observations also include `category` (for example `ddr`, `rdimm`
 
 Two workflows are included:
 
-- `.github/workflows/update-data.yml` runs daily at `02:17 UTC` and on manual dispatch. It collects data, runs tests, commits `data/` when data changes, and deploys the refreshed static site to GitHub Pages in the same workflow.
-- `.github/workflows/deploy-pages.yml` still publishes `web/` plus `data/` to GitHub Pages for normal dashboard/data pushes made outside the scheduled bot update path.
+- `.github/workflows/update-data.yml` runs a primary daily refresh at `09:20 UTC` (`18:20 KST`) and a next-day backfill check at `21:00 UTC` (`06:00 KST` on the following local day). Manual dispatches always run. The primary scheduled run skips collection when TrendForce daily spot observations already include the current KST date; the 06:00 KST next-day backfill run checks the previous KST date and collects only when that date is missing. A date is treated as collected only when at least two TrendForce daily spot rows exist for that date, and after a live collection the workflow re-checks the requested target date before tests, commit, and deploy. When collection is needed and the target-date verification passes, the workflow runs tests, commits `data/` when data changes, and deploys the refreshed static site to GitHub Pages in the same workflow.
+- `.github/workflows/deploy-pages.yml` still publishes `web/` plus `data/` to GitHub Pages for manual dispatches and normal dashboard/data pushes made outside the scheduled bot update path. Scheduled data commits include the explicit `Skip-Pages-Deploy: update-data-workflow` trailer, and `deploy-pages.yml` uses that marker to avoid re-entering a second Pages deploy because `update-data.yml` already deployed the same artifact.
 
-The dashboard also links to the manual **Update DRAM price data** workflow page. A browser button cannot safely trigger collection by itself without exposing a GitHub token, so manual refreshes intentionally require a signed-in GitHub account with repository write access.
+The dashboard also links to the manual **Update DRAM price data** workflow page. A browser button cannot safely trigger collection by itself without exposing a GitHub token, so manual refreshes intentionally require a signed-in GitHub account with repository write access. GitHub Actions runs on GitHub-hosted infrastructure, so the scheduled refresh does not depend on your computer being on or connected to Wi-Fi. To change the primary refresh time, edit the UTC cron expression in `.github/workflows/update-data.yml`; for example, `20 9 * * *` means `18:20 KST`.
 
 To enable Pages, create the repository on GitHub, push this branch, then enable **Settings → Pages → GitHub Actions**.
 
@@ -49,7 +49,7 @@ The project intentionally stores collected observations in committed JSON files 
 
 - Public TrendForce/DRAMeXchange pages expose current tables; free historical TrendForce/DRAMeXchange data is not assumed.
 - MemoryMarket publicly discloses recent weekly history for product pages and states that price data is copyrighted. Use this project for personal tracking/research and review source terms before broad redistribution.
-- HTML pages can change. The collector uses a best-effort policy for this personal tracker: parser/source failures are recorded in `data/status.json`, old observations are preserved, and the command exits non-zero only when every source fails and no stored observations remain. TrendForce rows require a source update timestamp; missing source date metadata is treated as a source failure instead of inventing an effective date.
+- HTML pages can change. The collector uses a best-effort policy for this personal tracker: parser/source failures are recorded in `data/status.json`, old observations are preserved, and the command exits non-zero only when every source fails and no stored observations remain. TrendForce rows require a source update timestamp; missing source date metadata is treated as a source failure instead of inventing an effective date. The next-day backfill check can only collect data that the public sources still expose; it does not fabricate missing historical TrendForce rows. If the requested date is still missing after collection, the scheduled workflow fails before commit/deploy instead of publishing a misleading freshness timestamp.
 
 ## Representative defaults
 

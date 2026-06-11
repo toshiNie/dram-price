@@ -3,8 +3,11 @@ name: Update DRAM price data
 on:
   workflow_dispatch:
   schedule:
-    # Runs daily at 02:17 UTC. GitHub cron schedules are UTC.
-    - cron: '17 2 * * *'
+    # Primary daily refresh: 09:20 UTC (18:20 KST). GitHub cron schedules are UTC.
+    - cron: '20 9 * * *'
+    # Next-day backfill check: 21:00 UTC (06:00 KST on the following local day).
+    # This run fetches only when the previous KST day's daily spot data is missing.
+    - cron: '0 21 * * *'
 
 permissions:
   contents: write
@@ -26,15 +29,54 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Decide whether collection is needed
+        id: freshness
+        env:
+          PYTHONPATH: src
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          args=(--status data/status.json --prices data/prices.json --timezone Asia/Seoul --minimum-daily-spot-rows 2)
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            args+=(--force)
+          elif [ "$SCHEDULE" = "0 21 * * *" ]; then
+            args+=(--require-daily-date yesterday)
+          else
+            args+=(--require-daily-date today)
+          fi
+          python -m dram_tracker.freshness "${args[@]}" | tee "$GITHUB_OUTPUT"
+      - name: Report freshness decision
+        run: |
+          echo "should_collect=${{ steps.freshness.outputs.should_collect }}"
+          echo "reason=${{ steps.freshness.outputs.reason }}"
+          echo "today=${{ steps.freshness.outputs.today }}"
+          echo "generated_at=${{ steps.freshness.outputs.generated_at }}"
+          echo "target_date=${{ steps.freshness.outputs.target_date }}"
+          echo "daily_observation_count=${{ steps.freshness.outputs.daily_observation_count }}"
       - name: Collect public DRAM data
+        if: steps.freshness.outputs.should_collect == 'true'
         env:
           PYTHONPATH: src
         run: python -m dram_tracker.collect --output data
+      - name: Verify requested daily data after collection
+        if: steps.freshness.outputs.should_collect == 'true' && steps.freshness.outputs.target_date != ''
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m dram_tracker.freshness \
+            --status data/status.json \
+            --prices data/prices.json \
+            --timezone Asia/Seoul \
+            --minimum-daily-spot-rows 2 \
+            --require-daily-date "${{ steps.freshness.outputs.target_date }}" \
+            --fail-if-collect-needed
       - name: Run tests
+        if: steps.freshness.outputs.should_collect == 'true'
         env:
           PYTHONPATH: src
         run: python -m unittest discover -s tests -v
       - name: Commit data changes
+        if: steps.freshness.outputs.should_collect == 'true'
         run: |
           if git diff --quiet -- data; then
             echo "No data changes to commit."
@@ -49,19 +91,24 @@ jobs:
             -m "Confidence: high" \
             -m "Scope-risk: narrow" \
             -m "Directive: keep source caveats and status evidence with data refreshes" \
-            -m "Tested: python -m unittest discover -s tests -v after collection"
+            -m "Tested: python -m dram_tracker.freshness --fail-if-collect-needed and python -m unittest discover -s tests -v after collection" \
+            -m "Skip-Pages-Deploy: update-data-workflow"
           git push
       - name: Prepare static site
+        if: steps.freshness.outputs.should_collect == 'true'
         run: |
           rm -rf site
           mkdir -p site
           cp -R web/. site/
           cp -R data site/data
       - uses: actions/configure-pages@v5
+        if: steps.freshness.outputs.should_collect == 'true'
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
+        if: steps.freshness.outputs.should_collect == 'true'
         with:
           path: site
       - id: deployment
+        if: steps.freshness.outputs.should_collect == 'true'
         uses: actions/deploy-pages@v4

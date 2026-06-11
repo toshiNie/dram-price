@@ -41,6 +41,27 @@ code { padding: .12rem .34rem; border-radius: 8px; background: #eef2ff; color: #
   letter-spacing: -.055em;
 }
 .hero-copy { max-width: 790px; line-height: 1.75; opacity: .94; font-weight: 650; }
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-top: 1.35rem;
+}
+.hero-dashboard-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .72rem 1rem;
+  border: 1px solid rgba(255,255,255,.46);
+  border-radius: 999px;
+  background: rgba(255,255,255,.16);
+  color: #fff;
+  font-weight: 850;
+  line-height: 1.35;
+  text-decoration: none;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, .16);
+}
+.hero-dashboard-button:hover { background: rgba(255,255,255,.24); }
 .eyebrow {
   margin: 0 0 .35rem;
   color: var(--accent);
