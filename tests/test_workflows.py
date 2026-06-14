@@ -27,11 +27,44 @@ class WorkflowContractTests(unittest.TestCase):
     def test_update_workflow_has_explicit_completeness_post_check(self) -> None:
         workflow = _read(UPDATE_WORKFLOW)
         self.assertIn("--minimum-daily-spot-rows 2", workflow)
+        self.assertIn("id: collect", workflow)
+        self.assertIn("id: verify_target_date", workflow)
         self.assertIn("Verify requested daily data after collection", workflow)
         self.assertIn('--require-daily-date "${{ steps.freshness.outputs.target_date }}"', workflow)
         self.assertIn("--fail-if-collect-needed", workflow)
         self.assertLess(workflow.index("Verify requested daily data after collection"), workflow.index("Run tests"))
         self.assertLess(workflow.index("Verify requested daily data after collection"), workflow.index("Commit data changes"))
+
+    def test_scheduled_update_failures_are_suppressed_but_manual_runs_stay_fail_fast(self) -> None:
+        workflow = _read(UPDATE_WORKFLOW)
+        scheduled_guard = "continue-on-error: ${{ github.event_name == 'schedule' }}"
+        self.assertEqual(4, workflow.count(scheduled_guard))
+        self.assertIn("# Manual dispatch stays fail-fast", workflow)
+        self.assertIn("Report scheduled collection failure", workflow)
+        self.assertIn("Report scheduled target-date miss", workflow)
+        self.assertIn("Report scheduled test failure", workflow)
+        self.assertIn("::warning::Scheduled DRAM collection failed", workflow)
+        self.assertIn("::warning::Scheduled collection finished", workflow)
+        self.assertIn("::warning::Scheduled validation failed", workflow)
+
+    def test_update_workflow_commits_and_deploys_only_after_clean_collection(self) -> None:
+        workflow = _read(UPDATE_WORKFLOW)
+        required_gate = (
+            "steps.freshness.outputs.should_collect == 'true' && "
+            "steps.collect.outcome == 'success' && "
+            "(steps.freshness.outputs.target_date == '' || steps.verify_target_date.outcome == 'success') && "
+            "steps.tests.outcome == 'success'"
+        )
+        for step_name in ("Commit data changes", "Prepare static site"):
+            self.assertIn(f"- name: {step_name}\n        if: {required_gate}", workflow)
+        for action in ("actions/configure-pages@v5", "actions/upload-pages-artifact@v3"):
+            self.assertIn(f"- uses: {action}\n        if: {required_gate}", workflow)
+        self.assertIn(f"- id: deployment\n        if: {required_gate}\n        uses: actions/deploy-pages@v4", workflow)
+        self.assertIn(
+            "if: steps.freshness.outputs.should_collect == 'true' && steps.collect.outcome == 'success' && "
+            "(steps.freshness.outputs.target_date == '' || steps.verify_target_date.outcome == 'success')",
+            workflow,
+        )
 
     def test_update_workflow_marks_self_deployed_commits_explicitly(self) -> None:
         workflow = _read(UPDATE_WORKFLOW)
