@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,9 +64,15 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn("run: python scripts/validate_publication.py", workflow)
         for step_name in ("Commit data changes", "Prepare static site"):
             self.assertIn(f"- name: {step_name}\n        if: {required_gate}", workflow)
-        for action in ("actions/configure-pages@v5", "actions/upload-pages-artifact@v3"):
-            self.assertIn(f"- uses: {action}\n        if: {required_gate}", workflow)
-        self.assertIn(f"- id: deployment\n        if: {required_gate}\n        uses: actions/deploy-pages@v4", workflow)
+        for action, tag in (("actions/configure-pages", "v5"), ("actions/upload-pages-artifact", "v3")):
+            self.assertRegex(
+                workflow,
+                rf"- uses: {re.escape(action)}@[0-9a-f]{{40}} # {tag}\n        if: {re.escape(required_gate)}",
+            )
+        self.assertRegex(
+            workflow,
+            rf"- id: deployment\n        if: {re.escape(required_gate)}\n        uses: actions/deploy-pages@[0-9a-f]{{40}} # v4",
+        )
 
     def test_update_workflow_marks_self_deployed_commits_explicitly(self) -> None:
         workflow = _read(UPDATE_WORKFLOW)
