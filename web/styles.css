@@ -1096,3 +1096,49 @@ td:not(:first-child),
 .chart svg text { font-size: 13px !important; }
 .series { stroke-width: 3.2px !important; }
 .endpoint { stroke: #080a0f !important; stroke-width: 2px !important; }
+
+/* Visual Ralph follow-up: legends, badges, and below-chart state contrast, 2026-06-25. */
+.legend span,
+.chart-legend span,
+.status-pill,
+.badge,
+.pill,
+.source-item,
+.card-badge,
+.gate-item,
+.mini-item,
+.diagnostic-card,
+.analysis-card,
+.notice .badge {
+  background: linear-gradient(135deg, rgba(15,23,42,0.82), rgba(30,41,59,0.64)) !important;
+  border: 1px solid rgba(226,232,240,0.16) !important;
+  color: var(--text-readable) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.055) !important;
+}
+.legend span:nth-child(3n+1),
+.card:nth-child(3n+1),
+.diagnostic-card:nth-child(3n+1) {
+  background: linear-gradient(135deg, rgba(14,116,144,0.18), rgba(15,23,42,0.84)) !important;
+}
+.legend span:nth-child(3n+2),
+.card:nth-child(3n+2),
+.diagnostic-card:nth-child(3n+2) {
+  background: linear-gradient(135deg, rgba(139,92,246,0.16), rgba(15,23,42,0.84)) !important;
+}
+.legend,
+.chart-legend,
+.card small,
+.gate-item small,
+.mini-item small,
+.status-value,
+.panel-heading p { color: #bac7d7 !important; }
+.card strong,
+.diagnostic-card h3,
+.analysis-card h3,
+.gate-item strong,
+.mini-item strong { color: #f8fafc !important; }
+.swatch,
+.legend-dot { box-shadow: 0 0 0 1px rgba(255,255,255,0.24), 0 0 14px currentColor !important; }
+.chart svg text { fill: #d8e2ee !important; }
+.chart .grid,
+.chart .axis { stroke: rgba(203,213,225,0.30) !important; }
