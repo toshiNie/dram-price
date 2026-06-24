@@ -63,6 +63,43 @@ function formatNumber(value, options = {}) {
   return Number.isFinite(value) ? value.toLocaleString('ko-KR', { maximumFractionDigits: 3, ...options }) : 'n/a';
 }
 
+function formatAxisNumber(value, step = 1) {
+  if (!Number.isFinite(value)) return 'n/a';
+  const maximumFractionDigits = Math.abs(step) >= 1 ? 0 : Math.min(3, Math.max(1, Math.ceil(-Math.log10(Math.abs(step))) + 1));
+  return value.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits });
+}
+
+function buildCleanAxisTicks(min, max, preferredCount = 5) {
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return { ticks: [], step: 1 };
+  let safeMin = Math.min(min, max);
+  let safeMax = Math.max(min, max);
+  if (safeMin === safeMax) {
+    const pad = Math.max(1, Math.abs(safeMax) * 0.08);
+    safeMin -= pad;
+    safeMax += pad;
+  }
+  const range = Math.max(safeMax - safeMin, Number.EPSILON);
+  let step = niceAxisStep(range / Math.max(1, preferredCount - 1));
+  if (Math.max(Math.abs(safeMin), Math.abs(safeMax)) >= 2 && range >= preferredCount - 1) {
+    step = Math.max(1, step);
+  }
+  const start = safeMin >= 0 && safeMin < step ? 0 : Math.floor(safeMin / step) * step;
+  const end = Math.ceil(safeMax / step) * step;
+  const ticks = [];
+  for (let value = start; value <= end + step / 2; value += step) {
+    ticks.push(Number(value.toFixed(8)));
+  }
+  return { ticks, step };
+}
+
+function niceAxisStep(rawStep) {
+  if (!Number.isFinite(rawStep) || rawStep <= 0) return 1;
+  const exponent = Math.floor(Math.log10(rawStep));
+  const fraction = rawStep / (10 ** exponent);
+  const niceFraction = fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10;
+  return niceFraction * (10 ** exponent);
+}
+
 function formatDateTime(value) {
   if (!value) return 'unknown';
   const date = new Date(value);
@@ -390,9 +427,10 @@ function renderChart(rows) {
   const values = allPoints.map((point) => point.value);
   const min = Math.min(...values);
   const max = Math.max(...values);
-  const pad = max === min ? Math.max(1, max * 0.1) : (max - min) * 0.12;
-  const yMin = min - pad;
-  const yMax = max + pad;
+  const axis = buildCleanAxisTicks(min, max, 5);
+  const yTicks = axis.ticks.length >= 2 ? axis.ticks : [min, max];
+  const yMin = yTicks[0];
+  const yMax = yTicks[yTicks.length - 1];
   const width = 1040;
   const height = 390;
   const left = 78;
@@ -403,9 +441,9 @@ function renderChart(rows) {
   const y = (value) => top + (1 - (value - yMin) / Math.max(1, yMax - yMin)) * (height - top - bottom);
 
   const svg = createSvgElement('svg', { viewBox: `0 0 ${width} ${height}`, preserveAspectRatio: 'xMidYMid meet' });
-  Array.from({ length: 5 }, (_, idx) => yMin + (idx / 4) * (yMax - yMin)).forEach((value) => {
+  yTicks.forEach((value) => {
     svg.append(createSvgElement('line', { class: 'grid', x1: left, x2: width - right, y1: y(value), y2: y(value) }));
-    appendSvgText(svg, formatNumber(value), { x: 16, y: y(value) + 4, 'font-size': 13, 'font-weight': 650, fill: '#aab3c2' });
+    appendSvgText(svg, formatAxisNumber(value, axis.step), { x: 16, y: y(value) + 4, 'font-size': 13, 'font-weight': 650, fill: '#aab3c2' });
   });
   svg.append(createSvgElement('line', { class: 'axis', x1: left, x2: width - right, y1: height - bottom, y2: height - bottom }));
   svg.append(createSvgElement('line', { class: 'axis', x1: left, x2: left, y1: top, y2: height - bottom }));
