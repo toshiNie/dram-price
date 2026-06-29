@@ -6,7 +6,7 @@
     <title>DRAM 가격 데일리 대시보드</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body id="top">
     <header class="hero">
       <div>
         <p class="eyebrow">DRAM 가격 랩</p>
@@ -32,10 +32,6 @@
     </noscript>
 
     <main>
-      <section class="notice">
-        <strong>중요:</strong> 개인 리서치용 가격 모니터입니다. 공개 페이지 구조가 바뀌면 일부 데이터가 비거나 지연될 수 있으며,
-        자동 예약 실행은 중지되어 있으며, 검토 후 GitHub Actions 수동 실행으로 갱신합니다.
-      </section>
 
       <section class="controls" aria-label="대시보드 필터">
         <label>데이터 소스
@@ -190,6 +186,11 @@
             공개 소스 상태를 확인한 뒤 GitHub에 로그인해 <strong>Run workflow</strong>를 누르세요. 저장소 쓰기 권한이 있어야 실행됩니다.
           </p>
         </div>
+      </section>
+
+      <section class="notice moved-notice">
+        <strong>운영 고지:</strong> 개인 리서치용 가격 모니터입니다. 공개 페이지 구조가 바뀌면 일부 데이터가 비거나 지연될 수 있으며,
+        자동 예약 실행은 중지되어 있으며, 검토 후 GitHub Actions 수동 실행으로 갱신합니다.
       </section>
 
       <section class="disclaimer">

@@ -143,6 +143,26 @@ function sourceLabel(source) {
   return SOURCE_LABELS[source] || source || 'unknown';
 }
 
+function primarySourceUrl(source) {
+  const match = (state.status?.sources || []).find((item) => item.source === source);
+  if (match?.urls?.length) return match.urls[0];
+  return null;
+}
+
+function sourceLink(source, url) {
+  const href = url || primarySourceUrl(source);
+  const label = sourceLabel(source);
+  if (!href) return document.createTextNode(label);
+  const anchor = document.createElement('a');
+  anchor.href = href;
+  anchor.target = '_blank';
+  anchor.rel = 'noopener noreferrer';
+  anchor.className = 'source-link';
+  anchor.textContent = label;
+  anchor.setAttribute('aria-label', `${label} 원문 출처 열기`);
+  return anchor;
+}
+
 function metricLabel(metric) {
   return METRIC_LABELS[metric] || metric.replaceAll('_', ' ');
 }
@@ -178,7 +198,8 @@ function appendInfoItem(parent, title, detail, className = 'mini-item') {
   const item = createElement('div', className);
   const strong = document.createElement('strong');
   const small = document.createElement('small');
-  strong.textContent = title;
+  if (title instanceof Node) strong.append(title);
+  else strong.textContent = title;
   small.textContent = detail;
   item.append(strong, small);
   parent.append(item);
@@ -350,7 +371,9 @@ function renderStatus() {
     const warnings = [...(source.warnings || []), ...(source.errors || [])];
     const className = source.ok ? 'gate-item pass' : source.errors?.length ? 'gate-item fail' : 'gate-item block';
     const detail = `${formatNumber(source.observation_count || 0)}개 관측치${warnings.length ? ` · ${warnings.join('; ')}` : ' · 경고 없음'}`;
-    appendInfoItem(sourceStatus, `${sourceLabel(source.source)} · ${source.ok ? '정상' : '점검 필요'}`, detail, className);
+    const title = document.createDocumentFragment();
+    title.append(sourceLink(source.source, source.urls?.[0]), document.createTextNode(` · ${source.ok ? '정상' : '점검 필요'}`));
+    appendInfoItem(sourceStatus, title, detail, className);
   });
 
   const caveats = document.getElementById('source-caveats');
@@ -486,9 +509,16 @@ function appendCell(row, value, className) {
   row.append(td);
 }
 
-function appendBadgeCell(row, value, className = 'badge neutral') {
+function appendBadgeCell(row, value, className = 'badge neutral', url = null) {
   const td = document.createElement('td');
-  const badge = createElement('span', className);
+  const badge = createElement(url ? 'a' : 'span', className);
+  if (url) {
+    badge.href = url;
+    badge.target = '_blank';
+    badge.rel = 'noopener noreferrer';
+    badge.classList.add('source-link');
+    badge.setAttribute('aria-label', `${value} 원문 출처 열기`);
+  }
   badge.textContent = value;
   td.append(badge);
   row.append(td);
@@ -516,7 +546,7 @@ function renderTable(rows) {
     appendBadgeCell(tr, kindLabel(obs.kind), obs.kind === 'contract' ? 'badge warn' : obs.kind === 'spot' ? 'badge good' : 'badge neutral');
     appendCell(tr, categoryLabel(observationCategory(obs)));
     appendCell(tr, obs.product_name || obs.product_id || 'unknown');
-    appendBadgeCell(tr, sourceLabel(obs.source), 'badge neutral');
+    appendBadgeCell(tr, sourceLabel(obs.source), 'badge neutral', obs.source_url || primarySourceUrl(obs.source));
     appendCell(tr, value === null ? 'n/a' : `${formatNumber(value)} ${obs.currency || ''}`.trim());
     body.append(tr);
   });
