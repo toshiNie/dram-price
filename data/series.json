@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-29T22:02:38Z",
+  "generated_at": "2026-07-01T04:53:05Z",
   "schema_version": 1,
   "series": [
     {
@@ -799,6 +799,22 @@
       ],
       "product_id": "trendforce-contract-ddr4-8gb-1gx8",
       "product_name": "DDR4 8Gb 1Gx8",
+      "representative": false,
+      "source": "trendforce"
+    },
+    {
+      "cadences": [
+        "monthly"
+      ],
+      "categories": [
+        "dram"
+      ],
+      "category": "dram",
+      "kinds": [
+        "contract"
+      ],
+      "product_id": "trendforce-contract-jun-specialty-dram-price-updated-on-6-30-2026-click-here-for-details",
+      "product_name": "Jun. Specialty DRAM price updated on 6/30/2026, click here for details.",
       "representative": false,
       "source": "trendforce"
     },
