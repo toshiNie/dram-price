@@ -2,7 +2,8 @@ const DATA_PATHS = [
   { prices: 'data/prices.json', series: 'data/series.json', status: 'data/status.json' },
   { prices: '../data/prices.json', series: '../data/series.json', status: '../data/status.json' },
 ];
-const COLORS = ['#7dd3fc', '#86efac', '#fb7185', '#fbbf24', '#c4b5fd', '#67e8f9', '#bef264', '#f9a8d4', '#93c5fd', '#fca5a5'];
+const THEME_STORAGE_KEY = 'dram-price-theme';
+const COLORS = ['#3182f6', '#00a886', '#e03131', '#b76e00', '#7c3aed', '#0891b2', '#65a30d', '#db2777', '#2563eb', '#dc2626'];
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const KIND_LABELS = {
   contract: '고정가',
@@ -28,6 +29,97 @@ const CAVEAT_LABELS = {
 const KNOWN_METRIC_VALUE_KEYS = new Set(['average', 'daily_high', 'daily_low', 'high', 'low', 'session_average', 'session_high', 'session_low']);
 
 const state = { prices: [], series: [], status: null };
+
+function storedTheme() {
+  try {
+    return window.localStorage?.getItem(THEME_STORAGE_KEY);
+  } catch (_) {
+    return null;
+  }
+}
+
+function saveTheme(theme) {
+  try {
+    window.localStorage?.setItem(THEME_STORAGE_KEY, theme);
+  } catch (_) {
+    // Theme persistence is optional; the static dashboard still works without localStorage.
+  }
+}
+
+function currentTheme() {
+  return document.documentElement?.dataset?.theme || 'light';
+}
+
+function applyTheme(theme) {
+  const normalized = theme === 'dark' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = normalized;
+  const button = document.getElementById('theme-toggle');
+  if (!button) return;
+  const isDark = normalized === 'dark';
+  button.setAttribute('aria-pressed', String(isDark));
+  button.setAttribute('aria-label', isDark ? '라이트 모드로 전환' : '다크 모드로 전환');
+  const label = button.querySelector('.theme-toggle-text');
+  if (label) label.textContent = isDark ? '라이트 모드' : '다크 모드';
+}
+
+function bindThemeToggle() {
+  applyTheme(storedTheme() || 'light');
+  const button = document.getElementById('theme-toggle');
+  if (!button) return;
+  button.addEventListener('click', () => {
+    const nextTheme = currentTheme() === 'dark' ? 'light' : 'dark';
+    applyTheme(nextTheme);
+    saveTheme(nextTheme);
+  });
+}
+
+function enableTableDrag() {
+  document.querySelectorAll('.table-wrap').forEach((wrap) => {
+    if (wrap.dataset.dragScrollBound === 'true') return;
+    wrap.dataset.dragScrollBound = 'true';
+    if (!wrap.getAttribute('tabindex')) wrap.setAttribute('tabindex', '0');
+    if (!wrap.getAttribute('aria-label')) wrap.setAttribute('aria-label', '표 안에서 스크롤해 전체 행과 열 보기');
+    const drag = { active: false, startX: 0, startScrollLeft: 0 };
+    wrap.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0 || wrap.scrollWidth <= wrap.clientWidth) return;
+      if (event.target && event.target.closest && event.target.closest('a, button, input, select, textarea, summary')) return;
+      drag.active = true;
+      drag.startX = event.clientX;
+      drag.startScrollLeft = wrap.scrollLeft;
+      wrap.classList.add('is-dragging');
+      if (wrap.setPointerCapture) wrap.setPointerCapture(event.pointerId);
+    });
+    wrap.addEventListener('pointermove', (event) => {
+      if (!drag.active) return;
+      wrap.scrollLeft = drag.startScrollLeft - (event.clientX - drag.startX);
+    });
+    const stopDrag = (event) => {
+      if (!drag.active) return;
+      drag.active = false;
+      wrap.classList.remove('is-dragging');
+      if (wrap.releasePointerCapture) wrap.releasePointerCapture(event.pointerId);
+    };
+    wrap.addEventListener('pointerup', stopDrag);
+    wrap.addEventListener('pointercancel', stopDrag);
+    wrap.addEventListener('mouseleave', () => {
+      drag.active = false;
+      wrap.classList.remove('is-dragging');
+    });
+    wrap.addEventListener('keydown', (event) => {
+      const lineStep = 64;
+      const pageStep = Math.max(160, wrap.clientHeight * 0.8);
+      let handled = true;
+      if (event.key === 'ArrowRight') wrap.scrollLeft += lineStep;
+      else if (event.key === 'ArrowLeft') wrap.scrollLeft -= lineStep;
+      else if (event.key === 'ArrowDown' && wrap.scrollHeight > wrap.clientHeight) wrap.scrollTop += lineStep;
+      else if (event.key === 'ArrowUp' && wrap.scrollHeight > wrap.clientHeight) wrap.scrollTop -= lineStep;
+      else if (event.key === 'PageDown' && wrap.scrollHeight > wrap.clientHeight) wrap.scrollTop += pageStep;
+      else if (event.key === 'PageUp' && wrap.scrollHeight > wrap.clientHeight) wrap.scrollTop -= pageStep;
+      else handled = false;
+      if (handled) event.preventDefault();
+    });
+  });
+}
 
 async function loadJsonFallback(kind) {
   const errors = [];
@@ -414,37 +506,79 @@ function dateRangeLabel(rows) {
   return `${dates[0]} ~ ${dates[dates.length - 1]}`;
 }
 
-function renderFilterSummary(rows, groups, allGroups, metric, limitValue) {
+function sourceBucketsForRows(rows) {
+  const seen = new Set(rows.map((obs) => obs.source || 'unknown'));
+  const configuredSources = (state.status?.sources || []).map((source) => source.source).filter(Boolean);
+  const orderedSources = [
+    ...configuredSources.filter((source) => seen.has(source)),
+    ...uniqueSorted([...seen].filter((source) => !configuredSources.includes(source))),
+  ];
+  return orderedSources.map((source) => ({
+    source,
+    rows: rows.filter((obs) => (obs.source || 'unknown') === source),
+  }));
+}
+
+function renderFilterSummary(rows, sourceCharts, metric, limitValue) {
   const source = document.getElementById('source-filter').value;
   const kind = document.getElementById('kind-filter').value;
   const category = document.getElementById('category-filter').value;
   const product = document.getElementById('product-filter').value;
+  const displayedGroups = sourceCharts.reduce((total, chart) => total + chart.groups.length, 0);
+  const totalGroups = sourceCharts.reduce((total, chart) => total + chart.allGroups.length, 0);
+  const nonEmptySources = sourceCharts.filter((chart) => chart.allGroups.length).length;
   const filters = [
     source === 'all' ? '전체 소스' : sourceLabel(source),
     kind === 'all' ? '전체 가격 종류' : kindLabel(kind),
     category === 'all' ? '전체 카테고리' : categoryLabel(category),
     product === 'representative' ? '대표 제품' : product === 'all' ? '전체 제품' : '선택 제품',
   ];
-  const limitNote = limitValue === 'all' ? '시리즈 제한 없음' : `최대 ${limitValue}개 시리즈`;
+  const limitNote = limitValue === 'all' ? '시리즈 제한 없음' : `소스별 최대 ${limitValue}개 시리즈`;
   setText('filter-summary', `${filters.join(' · ')} · ${formatNumber(rows.length)}개 관측치 · ${dateRangeLabel(rows)} · ${metricLabel(metric)} · ${limitNote}`);
-  setText('chart-subtitle', `${groups.length}개 시리즈 표시 / 조건에 맞는 전체 ${allGroups.length}개 시리즈`);
+  setText('chart-subtitle', `${nonEmptySources}개 소스별 그래프 · ${displayedGroups}개 시리즈 표시 / 조건에 맞는 전체 ${totalGroups}개 시리즈`);
 }
 
-function renderChart(rows) {
-  const metric = document.getElementById('metric-filter').value;
-  const limitValue = document.getElementById('series-limit').value;
-  const allGroups = groupSeries(rows, metric);
-  const groups = limitValue === 'all' ? allGroups : allGroups.slice(0, Number(limitValue));
-  const chart = document.getElementById('chart');
-  chart.replaceChildren();
-  renderFilterSummary(rows, groups, allGroups, metric, limitValue);
-  if (!groups.length) {
-    const empty = createElement('div', 'empty-state');
-    empty.textContent = '현재 필터와 지표에 맞는 관측치가 없습니다. 가격 종류 또는 지표를 바꿔보세요.';
-    chart.append(empty);
-    return;
-  }
+function createPointValueLabels(points, x, y, topY, bottomY, rightX) {
+  const layer = createSvgElement('g', { class: 'series-value-layer' });
+  points.forEach((point, index) => {
+    const valueText = formatNumber(point.value);
+    const pointX = x(point.date);
+    const pointY = y(point.value);
+    const labelWidth = Math.min(96, Math.max(48, valueText.length * 7.2 + 18));
+    const labelHeight = 21;
+    const lane = (index % 3) - 1;
+    let labelX = pointX + 12;
+    if (labelX + labelWidth > rightX) labelX = pointX - labelWidth - 12;
+    labelX = Math.max(8, Math.min(labelX, rightX - labelWidth));
+    let labelY = pointY - 14 + lane * 18;
+    labelY = Math.max(topY + 16, Math.min(labelY, bottomY - 8));
 
+    const label = createSvgElement('g', {
+      class: 'series-value-label',
+      transform: `translate(${labelX.toFixed(1)} ${labelY.toFixed(1)})`,
+    });
+    label.append(
+      createSvgElement('rect', {
+        class: 'series-value-pill',
+        x: 0,
+        y: -labelHeight + 5,
+        width: labelWidth.toFixed(1),
+        height: labelHeight,
+        rx: 10.5,
+      }),
+    );
+    appendSvgText(label, valueText, {
+      x: 8,
+      y: -5,
+      'dominant-baseline': 'middle',
+      'text-anchor': 'start',
+    });
+    layer.append(label);
+  });
+  return layer;
+}
+
+function createChartSvg(groups) {
   const allPoints = groups.flatMap((group) => group.points);
   const dates = uniqueSorted(allPoints.map((point) => point.date));
   const values = allPoints.map((point) => point.value);
@@ -471,7 +605,9 @@ function renderChart(rows) {
   svg.append(createSvgElement('line', { class: 'axis', x1: left, x2: width - right, y1: height - bottom, y2: height - bottom }));
   svg.append(createSvgElement('line', { class: 'axis', x1: left, x2: left, y1: top, y2: height - bottom }));
 
-  const tickCount = Math.min(5, dates.length);
+  const minDateLabelGap = 140;
+  const maxTickCount = Math.max(5, Math.floor((width - left - right) / minDateLabelGap) + 1);
+  const tickCount = Math.min(maxTickCount, dates.length);
   const tickIndexes = [...new Set(
     Array.from({ length: tickCount }, (_, idx) => Math.round((idx / Math.max(1, tickCount - 1)) * (dates.length - 1))),
   )];
@@ -485,11 +621,51 @@ function renderChart(rows) {
   groups.forEach((group, idx) => {
     const color = COLORS[idx % COLORS.length];
     const d = group.points.map((point, pointIdx) => `${pointIdx ? 'L' : 'M'} ${x(point.date).toFixed(1)} ${y(point.value).toFixed(1)}`).join(' ');
-    svg.append(createSvgElement('path', { class: 'series', d, stroke: color }));
-    const last = group.points[group.points.length - 1];
-    svg.append(createSvgElement('circle', { class: 'endpoint', cx: x(last.date), cy: y(last.value), r: 4, fill: color }));
+    const seriesGroup = createSvgElement('g', {
+      class: 'chart-series',
+      tabindex: 0,
+      focusable: true,
+      role: 'img',
+      'aria-label': `${group.label} 일별 가격 추이`,
+    });
+    seriesGroup.style.setProperty('--series-color', color);
+    const activateSeries = () => seriesGroup.classList.add('is-active');
+    const deactivateSeries = (event) => {
+      if (event?.relatedTarget && seriesGroup.contains(event.relatedTarget)) return;
+      seriesGroup.classList.remove('is-active');
+    };
+    seriesGroup.addEventListener('pointerenter', activateSeries);
+    seriesGroup.addEventListener('pointerover', activateSeries);
+    seriesGroup.addEventListener('mousemove', activateSeries);
+    seriesGroup.addEventListener('pointerleave', deactivateSeries);
+    seriesGroup.addEventListener('pointerout', deactivateSeries);
+    seriesGroup.addEventListener('click', activateSeries);
+    seriesGroup.addEventListener('focus', activateSeries);
+    seriesGroup.addEventListener('blur', deactivateSeries);
+    seriesGroup.append(
+      createSvgElement('path', { class: 'series-hit-line', d, stroke: color }),
+      createSvgElement('path', { class: 'series series-line', d, stroke: color }),
+    );
+    group.points.forEach((point, pointIdx) => {
+      const circle = createSvgElement('circle', {
+        class: `data-point${pointIdx === group.points.length - 1 ? ' endpoint' : ''}`,
+        cx: x(point.date).toFixed(1),
+        cy: y(point.value).toFixed(1),
+        r: pointIdx === group.points.length - 1 ? 4.2 : 3.3,
+        fill: color,
+      });
+      const title = createSvgElement('title');
+      title.textContent = `${group.label} · ${point.date} · ${formatNumber(point.value)}`;
+      circle.append(title);
+      seriesGroup.append(circle);
+    });
+    seriesGroup.append(createPointValueLabels(group.points, x, y, top, height - bottom, width - right));
+    svg.append(seriesGroup);
   });
+  return svg;
+}
 
+function createLegend(groups) {
   const legend = createElement('div', 'legend');
   groups.forEach((group, idx) => {
     const item = document.createElement('span');
@@ -498,8 +674,53 @@ function renderChart(rows) {
     item.append(swatch, document.createTextNode(group.label));
     legend.append(item);
   });
+  return legend;
+}
 
-  chart.append(svg, legend);
+function createSourceChartCard(sourceChart) {
+  const article = createElement('article', 'source-chart-card');
+  article.setAttribute('aria-label', `${sourceLabel(sourceChart.source)} 가격 추이 그래프`);
+
+  const heading = createElement('div', 'source-chart-heading');
+  const titleBox = document.createElement('div');
+  const eyebrow = createElement('p', 'eyebrow');
+  const title = document.createElement('h3');
+  const meta = createElement('p', 'source-chart-meta');
+  const badge = createElement('span', 'source-chart-badge');
+  eyebrow.textContent = 'Data source';
+  title.textContent = sourceLabel(sourceChart.source);
+  meta.textContent = `${formatNumber(sourceChart.rows.length)}개 관측치 · ${dateRangeLabel(sourceChart.rows)} · ${sourceChart.groups.length}/${sourceChart.allGroups.length}개 시리즈`;
+  badge.textContent = sourceChart.groups.length ? `${sourceChart.groups.length} series` : 'empty';
+  titleBox.append(eyebrow, title, meta);
+  heading.append(titleBox, badge);
+
+  const frame = createElement('div', 'source-chart-frame');
+  frame.append(createChartSvg(sourceChart.groups));
+
+  article.append(heading, frame, createLegend(sourceChart.groups));
+  return article;
+}
+
+function renderChart(rows) {
+  const metric = document.getElementById('metric-filter').value;
+  const limitValue = document.getElementById('series-limit').value;
+  const sourceCharts = sourceBucketsForRows(rows).map((bucket) => {
+    const allGroups = groupSeries(bucket.rows, metric);
+    const groups = limitValue === 'all' ? allGroups : allGroups.slice(0, Number(limitValue));
+    return { ...bucket, allGroups, groups };
+  });
+  const visibleCharts = sourceCharts.filter((sourceChart) => sourceChart.groups.length);
+  const chart = document.getElementById('chart');
+  chart.replaceChildren();
+  renderFilterSummary(rows, sourceCharts, metric, limitValue);
+  if (!visibleCharts.length) {
+    const empty = createElement('div', 'empty-state');
+    empty.textContent = '현재 필터와 지표에 맞는 관측치가 없습니다. 가격 종류 또는 지표를 바꿔보세요.';
+    chart.append(empty);
+    return;
+  }
+
+  chart.replaceChildren(...visibleCharts.map(createSourceChartCard));
 }
 
 function appendCell(row, value, className) {
@@ -558,6 +779,7 @@ function render() {
   renderStatus();
   renderChart(rows);
   renderTable(rows);
+  enableTableDrag();
 }
 
 async function init() {
@@ -577,4 +799,5 @@ async function init() {
   }
 }
 
+bindThemeToggle();
 init();

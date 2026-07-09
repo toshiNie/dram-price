@@ -1,12 +1,32 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
     <title>DRAM 가격 데일리 대시보드</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260709-light-dark-ux" />
   </head>
   <body id="top">
+    <nav class="site-nav" aria-label="연결 프로젝트 바로가기">
+      <a class="site-nav-brand" href="https://sonchanggi.github.io/quant-dashboard/" aria-label="Quant Research Hub로 이동">Quant Research Hub</a>
+      <div class="site-nav-links" aria-label="프로젝트 목록">
+        <a href="https://sonchanggi.github.io/quant-dashboard/">Hub</a>
+        <a href="https://sonchanggi.github.io/momentum-factor-lab/">Momentum</a>
+        <a class="is-active" href="#top" aria-current="page">DRAM</a>
+        <a href="https://sonchanggi.github.io/best-factor/">Best Factor</a>
+        <a href="https://sonchanggi.github.io/etf-tracking/">ETF</a>
+        <a href="https://sonchanggi.github.io/sox/">SOX</a>
+        <a href="https://sonchanggi.github.io/quant-dashboard/risk-score/">Risk</a>
+        <a href="https://sonchanggi.github.io/port/">Port</a>
+        <a href="https://sonchanggi.github.io/valuation/">Valuation</a>
+      </div>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="다크 모드로 전환">
+        <span class="theme-toggle-icon" aria-hidden="true"></span>
+        <span class="theme-toggle-text">다크 모드</span>
+      </button>
+    </nav>
+
     <header class="hero">
       <div>
         <p class="eyebrow">DRAM 가격 랩</p>
@@ -16,9 +36,9 @@
           대표 제품은 바로 보이고, 세부 제품·카테고리·지표는 필터로 좁혀 봅니다.
         </p>
         <nav class="hero-actions" aria-label="대시보드 이동">
-          <a class="hero-dashboard-button" href="https://sonchanggi.github.io/quant-dashboard/">
-            ← 통합 대시보드로 돌아가기
-          </a>
+          <a class="button hero-dashboard-button" href="https://sonchanggi.github.io/quant-dashboard/">통합 대시보드로 돌아가기</a>
+          <a class="button secondary hero-dashboard-button" href="#visual-dashboard">가격 차트</a>
+          <a class="button secondary hero-dashboard-button" href="#latest-observations">최신 표</a>
         </nav>
       </div>
       <div class="status-card" id="run-status" aria-live="polite">데이터를 불러오는 중...</div>
@@ -101,15 +121,15 @@
         <div class="panel-heading">
           <div>
             <p class="eyebrow">시각화 대시보드</p>
-            <h2>대표 DRAM 가격 추이</h2>
+            <h2>소스별 대표 DRAM 가격 추이</h2>
           </div>
-          <p id="chart-subtitle">대표 시리즈가 기본으로 표시됩니다.</p>
+          <p id="chart-subtitle">대표 시리즈를 데이터 소스별 그래프로 나누어 표시합니다.</p>
         </div>
-        <p id="filter-summary" class="scenario-note">필터를 적용하면 차트와 최신 관측치 표가 즉시 갱신됩니다.</p>
+        <p id="filter-summary" class="scenario-note">필터를 적용하면 소스별 차트와 최신 관측치 표가 즉시 갱신됩니다.</p>
         <div id="chart" class="chart" role="img" aria-label="DRAM 가격 차트"></div>
       </section>
 
-      <section class="panel">
+      <section class="panel" id="latest-observations">
         <div class="panel-heading">
           <div>
             <p class="eyebrow">최신 관측</p>
@@ -213,6 +233,6 @@
     </nav>
     <div id="page-bottom" tabindex="-1" aria-hidden="true"></div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=20260709-light-dark-ux"></script>
   </body>
 </html>
