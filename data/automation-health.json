@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-07-12T04:02:05.626293Z",
+  "updatedAt": "2026-07-12T05:42:25.931265Z",
   "targetDate": "2026-07-12",
   "status": "blocked",
   "collectionOutcome": "success",
@@ -16,11 +16,11 @@
     "target_date_missing_after_collection"
   ],
   "consecutiveWarningRuns": 0,
-  "consecutiveBlockingFailures": 4,
+  "consecutiveBlockingFailures": 5,
   "alertThreshold": 3,
   "alertRequired": true,
   "alertReasons": [
-    "blocking failures persisted for 4 collection runs"
+    "blocking failures persisted for 5 collection runs"
   ],
   "history": [
     {
@@ -63,6 +63,16 @@
     },
     {
       "checkedAt": "2026-07-12T04:02:05.626293Z",
+      "targetDate": "2026-07-12",
+      "status": "blocked",
+      "warningCount": 0,
+      "sourceErrorCount": 0,
+      "blockingReasons": [
+        "target_date_missing_after_collection"
+      ]
+    },
+    {
+      "checkedAt": "2026-07-12T05:42:25.931265Z",
       "targetDate": "2026-07-12",
       "status": "blocked",
       "warningCount": 0,
