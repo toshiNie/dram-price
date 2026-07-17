@@ -784,7 +784,7 @@ function render() {
 
 async function init() {
   try {
-    const [prices, series, status] = await Promise.all(['prices', '系列', 'status'].map(loadJsonFallback));
+    const [prices, series, status] = await Promise.all(['prices', 'series', 'status'].map(loadJsonFallback));
     state.prices = prices.observations || [];
     state.series = series.series || [];
     state.status = status;
