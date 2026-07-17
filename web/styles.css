@@ -613,7 +613,7 @@ h3 {
 }
 
 .source-chart-frame::after {
-  content: "가로로 스크롤";
+  content: "横向滚动";
   position: sticky;
   right: 10px;
   bottom: 10px;
@@ -824,7 +824,7 @@ h3 {
 }
 
 .table-wrap::after {
-  content: "표 안에서 스크롤";
+  content: "表格内滚动";
   position: sticky;
   right: 10px;
   bottom: 10px;

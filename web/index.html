@@ -1,16 +1,16 @@
 <!doctype html>
-<html lang="ko" data-theme="light">
+<html lang="zh-CN" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
-    <title>DRAM 가격 데일리 대시보드</title>
+    <title>DRAM 价格每日仪表盘</title>
     <link rel="stylesheet" href="styles.css?v=20260710-unified-nav" />
   </head>
   <body id="top">
-    <nav class="site-nav" aria-label="연결 프로젝트 바로가기">
-      <a class="site-nav-brand" href="https://sonchanggi.github.io/quant-dashboard/" aria-label="Quant Research Hub로 이동">Quant Research Hub</a>
-      <div class="site-nav-links" aria-label="프로젝트 목록">
+    <nav class="site-nav" aria-label="关联项目快捷入口">
+      <a class="site-nav-brand" href="https://sonchanggi.github.io/quant-dashboard/" aria-label="前往 Quant Research Hub">Quant Research Hub</a>
+      <div class="site-nav-links" aria-label="项目列表">
         <a href="https://sonchanggi.github.io/quant-dashboard/">Hub</a>
         <a href="https://sonchanggi.github.io/fearNgreed/">Fear &amp; Greed</a>
         <a href="https://sonchanggi.github.io/momentum-factor-lab/">Momentum</a>
@@ -22,97 +22,97 @@
         <a href="https://sonchanggi.github.io/port/">Port</a>
         <a href="https://sonchanggi.github.io/valuation/">Valuation</a>
       </div>
-      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="다크 모드로 전환">
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="切换到深色模式">
         <span class="theme-toggle-icon" aria-hidden="true"></span>
-        <span class="theme-toggle-text">다크 모드</span>
+        <span class="theme-toggle-text">深色模式</span>
       </button>
     </nav>
 
     <header class="hero">
       <div>
-        <p class="eyebrow">DRAM 가격 랩</p>
-        <h1>DRAM 가격 데일리 대시보드</h1>
+        <p class="eyebrow">DRAM 价格实验室</p>
+        <h1>DRAM 价格每日仪表盘</h1>
         <p class="hero-copy">
-          DRAM 현물가, 고정가, 주간 현물 프록시를 큼직한 글자와 여백으로 비교하는 개인 가격 모니터입니다.
-          대표 제품은 바로 보이고, 세부 제품·카테고리·지표는 필터로 좁혀 봅니다.
+          这是一个用于比较 DRAM 现货价、合约价和周度现货代理价格的个人价格监测器。
+          代表性产品默认展示，也可以通过筛选器查看具体产品、类别和指标。
         </p>
-        <nav class="hero-actions" aria-label="대시보드 이동">
-          <a class="button hero-dashboard-button" href="https://sonchanggi.github.io/quant-dashboard/">통합 대시보드로 돌아가기</a>
-          <a class="button secondary hero-dashboard-button" href="#visual-dashboard">가격 차트</a>
-          <a class="button secondary hero-dashboard-button" href="#latest-observations">최신 표</a>
+        <nav class="hero-actions" aria-label="仪表盘导航">
+          <a class="button hero-dashboard-button" href="https://sonchanggi.github.io/quant-dashboard/">返回综合仪表盘</a>
+          <a class="button secondary hero-dashboard-button" href="#visual-dashboard">价格图表</a>
+          <a class="button secondary hero-dashboard-button" href="#latest-observations">最新数据表</a>
         </nav>
       </div>
-      <div class="status-card" id="run-status" aria-live="polite">데이터를 불러오는 중...</div>
+      <div class="status-card" id="run-status" aria-live="polite">正在加载数据…</div>
     </header>
 
     <noscript>
       <div class="noscript-warning">
-        이 대시보드는 정적 JSON 데이터를 불러와 표와 차트를 그리므로 JavaScript가 필요합니다.
-        JavaScript를 켠 뒤 다시 열어주세요.
+        本仪表盘需要 JavaScript 来加载静态 JSON 数据并绘制表格与图表。
+        请开启 JavaScript 后重新打开。
       </div>
     </noscript>
 
     <main>
 
-      <section class="controls" aria-label="대시보드 필터">
-        <label>데이터 소스
-          <select id="source-filter"><option value="all">전체 소스</option></select>
+      <section class="controls" aria-label="仪表盘筛选器">
+        <label>数据源
+          <select id="source-filter"><option value="all">全部来源</option></select>
         </label>
-        <label>가격 종류
-          <select id="kind-filter"><option value="all">전체</option></select>
+        <label>价格类型
+          <select id="kind-filter"><option value="all">全部</option></select>
         </label>
-        <label>카테고리
-          <select id="category-filter"><option value="all">전체 카테고리</option></select>
+        <label>类别
+          <select id="category-filter"><option value="all">全部类别</option></select>
         </label>
-        <label>제품
+        <label>产品
           <select id="product-filter">
-            <option value="representative">대표 제품 우선</option>
-            <option value="all">전체 제품</option>
+            <option value="representative">优先显示代表产品</option>
+            <option value="all">全部产品</option>
           </select>
-          <span class="control-hint">별표가 붙은 제품은 기본 대표 시리즈입니다.</span>
+          <span class="control-hint">带星号的产品是默认代表系列。</span>
         </label>
-        <label>차트 지표
+        <label>图表指标
           <select id="metric-filter">
-            <option value="auto">자동 선택</option>
-            <option value="session_average">TrendForce 세션 평균</option>
-            <option value="average">MemoryMarket 평균</option>
-            <option value="daily_high">일별 고가</option>
-            <option value="daily_low">일별 저가</option>
+            <option value="auto">自动选择</option>
+            <option value="session_average">TrendForce 会话均价</option>
+            <option value="average">MemoryMarket 均价</option>
+            <option value="daily_high">日内高价</option>
+            <option value="daily_low">日内低价</option>
           </select>
         </label>
-        <label>차트 시리즈
+        <label>图表系列
           <select id="series-limit">
-            <option value="all">조건에 맞는 전체</option>
-            <option value="12">상위 12개</option>
-            <option value="24">상위 24개</option>
+            <option value="all">全部匹配项</option>
+            <option value="12">前 12 个</option>
+            <option value="24">前 24 个</option>
           </select>
-          <span class="control-hint">전체 제품 선택 시 화면 폭에 맞춰 제한할 수 있습니다.</span>
+          <span class="control-hint">选择全部产品时，可根据屏幕宽度限制系列数量。</span>
         </label>
       </section>
 
-      <section class="cards" aria-label="요약 카드">
+      <section class="cards" aria-label="摘要卡片">
         <article class="card">
-          <span>총 관측치</span>
+          <span>观测总数</span>
           <strong id="summary-observations">-</strong>
           <small id="summary-observations-detail">-</small>
         </article>
         <article class="card">
-          <span>대표 시리즈</span>
+          <span>代表系列</span>
           <strong id="summary-representatives">-</strong>
           <small id="summary-representatives-detail">-</small>
         </article>
         <article class="card">
-          <span>현물/프록시 관측</span>
+          <span>现货/代理观测</span>
           <strong id="summary-spot">-</strong>
-          <small>TrendForce 현물가와 MemoryMarket 주간 현물 프록시를 함께 표시합니다.</small>
+          <small>TrendForce 同时显示 TrendForce 现货价和 MemoryMarket 周度现货代理。</small>
         </article>
         <article class="card">
-          <span>고정가 관측</span>
+          <span>合约价观测</span>
           <strong id="summary-contract">-</strong>
-          <small>고정가는 월간/업데이트일 기준 관측치입니다.</small>
+          <small>合约价按月度或更新时间记录。</small>
         </article>
         <article class="card">
-          <span>최근 수집 시각</span>
+          <span>最近采集时间</span>
           <strong id="summary-generated">-</strong>
           <small id="summary-generated-detail">-</small>
         </article>
@@ -121,35 +121,35 @@
       <section class="panel visual-panel" id="visual-dashboard">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">시각화 대시보드</p>
-            <h2>소스별 대표 DRAM 가격 추이</h2>
+            <p class="eyebrow">可视化仪表盘</p>
+            <h2>各来源代表 DRAM 价格走势</h2>
           </div>
-          <p id="chart-subtitle">대표 시리즈를 데이터 소스별 그래프로 나누어 표시합니다.</p>
+          <p id="chart-subtitle">按来源分别展示代表系列图表。</p>
         </div>
-        <p id="filter-summary" class="scenario-note">필터를 적용하면 소스별 차트와 최신 관측치 표가 즉시 갱신됩니다.</p>
-        <div id="chart" class="chart" role="img" aria-label="DRAM 가격 차트"></div>
+        <p id="filter-summary" class="scenario-note">应用筛选条件后，各来源图表和最新观测表会即时更新。</p>
+        <div id="chart" class="chart" role="img" aria-label="DRAM 价格图表"></div>
       </section>
 
       <section class="panel" id="latest-observations">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">최신 관측</p>
-            <h2>필터 기준 최신 가격 표</h2>
+            <p class="eyebrow">最新观测</p>
+            <h2>按筛选条件显示的最新价格</h2>
           </div>
           <p id="latest-caption">
-            선택한 지표의 최신 행을 날짜 역순으로 표시합니다. 값이 비어 있으면 해당 소스가 그 지표를 제공하지 않은 것입니다.
+            按日期倒序显示所选指标的最新记录。若数值为空，表示该来源未提供此指标。
           </p>
         </div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>날짜</th>
-                <th>가격 종류</th>
-                <th>카테고리</th>
-                <th>제품</th>
-                <th>소스</th>
-                <th>선택 지표값</th>
+                <th>日期</th>
+                <th>价格类型</th>
+                <th>类别</th>
+                <th>产品</th>
+                <th>来源</th>
+                <th>所选指标值</th>
               </tr>
             </thead>
             <tbody id="latest-table"></tbody>
@@ -160,21 +160,21 @@
       <section class="panel diagnostics-panel">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">수집 상태</p>
-            <h2>소스별 상태와 주의사항</h2>
+            <p class="eyebrow">采集状态</p>
+            <h2>各来源状态与注意事项</h2>
           </div>
           <p>
-            소스별 성공 여부와 공개 데이터 한계를 짧은 문장으로 정리합니다.
-            이상이 있으면 경고 색상으로 표시됩니다.
+            简要汇总各来源的成功状态和公开数据限制。
+            异常状态会以警告色显示。
           </p>
         </div>
         <div class="diagnostic-grid">
           <article class="diagnostic-card">
-            <h3>소스 상태</h3>
+            <h3>来源状态</h3>
             <div id="source-status" class="gate-list"></div>
           </article>
           <article class="diagnostic-card">
-            <h3>데이터 주의사항</h3>
+            <h3>数据注意事项</h3>
             <div id="source-caveats" class="mini-list"></div>
           </article>
         </div>
@@ -182,55 +182,55 @@
 
       <section class="panel two-col">
         <div>
-          <p class="eyebrow">표기 기준</p>
-          <h2>가격 종류와 지표 읽기</h2>
+          <p class="eyebrow">口径说明</p>
+          <h2>如何理解价格类型与指标</h2>
           <div class="explain-box">
             <ul>
-              <li><strong>현물가</strong>: TrendForce 현재 공개 표의 일별 고가·저가·평균입니다.</li>
-              <li><strong>고정가</strong>: 월간/업데이트일 기준 공개 계약가입니다.</li>
-              <li><strong>현물 프록시</strong>: MemoryMarket 주간 이력으로 보완한 과거 흐름입니다.</li>
-              <li><strong>대표 제품</strong>: DDR4/DDR5 주요 제품만 먼저 보여주는 기본 보기입니다.</li>
+              <li><strong>现货价</strong>: TrendForce 当前公开表中的日内高价、低价和均价。</li>
+              <li><strong>合约价</strong>: 按月度或更新时间记录的公开合约价格。</li>
+              <li><strong>现货代理</strong>: 使用 MemoryMarket 周度历史补充过去的价格走势。</li>
+              <li><strong>代表产品</strong>: 默认优先显示 DDR4/DDR5 的主要产品。</li>
             </ul>
           </div>
         </div>
         <div class="explain">
-          <p class="eyebrow">수동 자동화</p>
-          <h2>검토 후 갱신되는 정적 데이터</h2>
+          <p class="eyebrow">手动自动化</p>
+          <h2>审核后更新的静态数据</h2>
           <p>
-            자동 스케줄은 멀티 repo 롤백 이후 중지되어 있습니다. 검토 후 수동 workflow_dispatch를 실행하면
-            같은 실행 안에서 GitHub Pages에 <code>web/</code>과 <code>data/</code>를 다시 배포합니다.
+            自动计划任务在多仓库回滚后已暂停。审核后手动运行 workflow_dispatch，即可
+            在同一次运行中将 <code>web/</code> 和 <code>data/</code> 重新部署。
           </p>
           <a class="action-button" href="https://github.com/SonChangGi/dram-price/actions/workflows/update-data.yml" target="_blank" rel="noopener">
-            수동 업데이트 열기
+            打开手动更新
           </a>
           <p class="action-note">
-            공개 소스 상태를 확인한 뒤 GitHub에 로그인해 <strong>Run workflow</strong>를 누르세요. 저장소 쓰기 권한이 있어야 실행됩니다.
+            确认公开来源状态后，登录 GitHub 并点击 <strong>Run workflow</strong>。执行此操作需要仓库写入权限。
           </p>
         </div>
       </section>
 
       <section class="notice moved-notice">
-        <strong>운영 고지:</strong> 개인 리서치용 가격 모니터입니다. 공개 페이지 구조가 바뀌면 일부 데이터가 비거나 지연될 수 있으며,
-        자동 예약 실행은 중지되어 있으며, 검토 후 GitHub Actions 수동 실행으로 갱신합니다.
+        <strong>运行说明：</strong> 这是个人研究用价格监测器。公开页面结构变化可能导致部分数据缺失或延迟，
+        自动定时运行已暂停，请审核后通过 GitHub Actions 手动运行更新。
       </section>
 
       <section class="disclaimer">
-        <h2>주의 및 한계</h2>
+        <h2>注意事项与限制</h2>
         <p>
-          본 대시보드는 개인 리서치와 가격 흐름 모니터링을 위한 화면입니다. 공개 데이터의 저작권·이용 조건을 확인해야 하며,
-          소스 HTML 변경, 무료 공개 범위 제한, 고정가/현물가의 기준일 차이로 인해 실제 시장 체결 가격과 다를 수 있습니다.
+          本仪表盘用于个人研究和价格走势监测。请确认公开数据的版权与使用条款，
+          由于来源 HTML 变化、免费公开范围限制，以及合约价与现货价基准日期不同，数据可能与实际市场成交价格存在差异。
         </p>
       </section>
     </main>
 
     <footer>
-      <span>DRAM 가격 랩에서 생성</span>
+      <span>由 DRAM 价格实验室生成</span>
       <span>Sources: <a href="https://www.trendforce.com/price/dram/dram_spot">TrendForce</a> · <a href="https://www.memorymarket.com/price">MemoryMarket</a></span>
     </footer>
 
-    <nav class="page-jump-nav" aria-label="페이지 빠른 이동">
-      <a href="#top" aria-label="맨 위로 이동" title="맨 위로">↑</a>
-      <a href="#page-bottom" aria-label="맨 아래로 이동" title="맨 아래로">↓</a>
+    <nav class="page-jump-nav" aria-label="页面快速跳转">
+      <a href="#top" aria-label="返回顶部" title="返回顶部">↑</a>
+      <a href="#page-bottom" aria-label="跳到底部" title="跳到底部">↓</a>
     </nav>
     <div id="page-bottom" tabindex="-1" aria-hidden="true"></div>
 

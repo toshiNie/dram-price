@@ -6,25 +6,25 @@ const THEME_STORAGE_KEY = 'dram-price-theme';
 const COLORS = ['#3182f6', '#00a886', '#e03131', '#b76e00', '#7c3aed', '#0891b2', '#65a30d', '#db2777', '#2563eb', '#dc2626'];
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const KIND_LABELS = {
-  contract: '고정가',
-  spot: '현물가',
-  spot_proxy: '현물 프록시',
+  contract: '合约价',
+  spot: '现货价',
+  spot_proxy: '现货代理',
 };
 const SOURCE_LABELS = {
   memorymarket: 'MemoryMarket',
   trendforce: 'TrendForce',
 };
 const METRIC_LABELS = {
-  auto: '자동 선택',
-  session_average: '세션 평균',
-  average: '평균',
-  daily_high: '고가',
-  daily_low: '저가',
+  auto: '自动选择',
+  session_average: '会话均价',
+  average: '均价',
+  daily_high: '高价',
+  daily_low: '低价',
 };
 const CAVEAT_LABELS = {
-  'TrendForce/DRAMeXchange public pages expose current tables but not free historical data.': 'TrendForce/DRAMeXchange 공개 페이지는 현재 표 중심이며 무료 과거 데이터는 제한적입니다.',
-  'MemoryMarket publicly discloses six-month weekly history; respect source terms and attribution.': 'MemoryMarket은 최근 약 6개월 주간 이력을 공개합니다. 출처 표기와 이용 조건을 확인하세요.',
-  'Contract prices are monthly/update-date observations; collected_at is not the effective price date.': '고정가는 월간/업데이트일 기준 관측치이며 수집 시각이 실제 가격 적용일은 아닙니다.',
+  'TrendForce/DRAMeXchange public pages expose current tables but not free historical data.': 'TrendForce/DRAMeXchange 公开页面主要提供当前价格表，免费历史数据有限。',
+  'MemoryMarket publicly discloses six-month weekly history; respect source terms and attribution.': 'MemoryMarket 公开约六个月的周度历史，请遵守来源条款并注明出处。',
+  'Contract prices are monthly/update-date observations; collected_at is not the effective price date.': '合约价按月度或更新时间记录，采集时间并不等于价格生效日期。',
 };
 const KNOWN_METRIC_VALUE_KEYS = new Set(['average', 'daily_high', 'daily_low', 'high', 'low', 'session_average', 'session_high', 'session_low']);
 
@@ -57,9 +57,9 @@ function applyTheme(theme) {
   if (!button) return;
   const isDark = normalized === 'dark';
   button.setAttribute('aria-pressed', String(isDark));
-  button.setAttribute('aria-label', isDark ? '라이트 모드로 전환' : '다크 모드로 전환');
+  button.setAttribute('aria-label', isDark ? '切换到浅色模式' : '切换到深色模式');
   const label = button.querySelector('.theme-toggle-text');
-  if (label) label.textContent = isDark ? '라이트 모드' : '다크 모드';
+  if (label) label.textContent = isDark ? '浅色模式' : '深色模式';
 }
 
 function bindThemeToggle() {
@@ -78,7 +78,7 @@ function enableTableDrag() {
     if (wrap.dataset.dragScrollBound === 'true') return;
     wrap.dataset.dragScrollBound = 'true';
     if (!wrap.getAttribute('tabindex')) wrap.setAttribute('tabindex', '0');
-    if (!wrap.getAttribute('aria-label')) wrap.setAttribute('aria-label', '표 안에서 스크롤해 전체 행과 열 보기');
+    if (!wrap.getAttribute('aria-label')) wrap.setAttribute('aria-label', '在表格内滚动查看全部行和列');
     const drag = { active: false, startX: 0, startScrollLeft: 0 };
     wrap.addEventListener('pointerdown', (event) => {
       if (event.button !== 0 || wrap.scrollWidth <= wrap.clientWidth) return;
@@ -152,13 +152,13 @@ function asFiniteNumber(value) {
 }
 
 function formatNumber(value, options = {}) {
-  return Number.isFinite(value) ? value.toLocaleString('ko-KR', { maximumFractionDigits: 3, ...options }) : 'n/a';
+  return Number.isFinite(value) ? value.toLocaleString('zh-CN', { maximumFractionDigits: 3, ...options }) : '无数据';
 }
 
 function formatAxisNumber(value, step = 1) {
-  if (!Number.isFinite(value)) return 'n/a';
+  if (!Number.isFinite(value)) return '无数据';
   const maximumFractionDigits = Math.abs(step) >= 1 ? 0 : Math.min(3, Math.max(1, Math.ceil(-Math.log10(Math.abs(step))) + 1));
-  return value.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits });
+  return value.toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits });
 }
 
 function buildCleanAxisTicks(min, max, preferredCount = 5) {
@@ -193,10 +193,10 @@ function niceAxisStep(rawStep) {
 }
 
 function formatDateTime(value) {
-  if (!value) return 'unknown';
+  if (!value) return '未知';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat('ko-KR', {
+  return new Intl.DateTimeFormat('zh-CN', {
     timeZone: 'Asia/Seoul',
     year: 'numeric',
     month: '2-digit',
@@ -224,15 +224,15 @@ function seriesCategories(item) {
 }
 
 function categoryLabel(category) {
-  return category === 'uncategorized' ? '기타' : category.toUpperCase();
+  return category === 'uncategorized' ? '其他' : category.toUpperCase();
 }
 
 function kindLabel(kind) {
-  return KIND_LABELS[kind] || String(kind || 'unknown').replace('_', ' ');
+  return KIND_LABELS[kind] || String(kind || '未知').replace('_', ' ');
 }
 
 function sourceLabel(source) {
-  return SOURCE_LABELS[source] || source || 'unknown';
+  return SOURCE_LABELS[source] || source || '未知';
 }
 
 function primarySourceUrl(source) {
@@ -251,7 +251,7 @@ function sourceLink(source, url) {
   anchor.rel = 'noopener noreferrer';
   anchor.className = 'source-link';
   anchor.textContent = label;
-  anchor.setAttribute('aria-label', `${label} 원문 출처 열기`);
+  anchor.setAttribute('aria-label', `${label} 打开原始来源`);
   return anchor;
 }
 
@@ -332,8 +332,8 @@ function productOptionsFor(rows, context) {
   const productIds = new Set(rows.map((obs) => obs.product_id));
   const representatives = matchingRepresentativeIds(context);
   const options = [];
-  if (representatives.size) options.push({ value: 'representative', label: '대표 제품 우선' });
-  options.push({ value: 'all', label: '전체 제품' });
+  if (representatives.size) options.push({ value: 'representative', label: '优先显示代表产品' });
+  options.push({ value: 'all', label: '全部产品' });
   state.series
     .filter((item) => productIds.has(item.product_id))
     .forEach((item) => options.push({ value: item.product_id, label: productOptionLabel(item) }));
@@ -384,7 +384,7 @@ function refreshFilterOptions() {
 
   replaceOptions(
     sourceFilter,
-    [{ value: 'all', label: '전체 소스' }, ...uniqueSorted(state.prices.map((obs) => obs.source)).map((source) => ({ value: source, label: sourceLabel(source) }))],
+    [{ value: 'all', label: '全部来源' }, ...uniqueSorted(state.prices.map((obs) => obs.source)).map((source) => ({ value: source, label: sourceLabel(source) }))],
     sourceFilter.value || 'all',
   );
 
@@ -392,7 +392,7 @@ function refreshFilterOptions() {
   const rowsBySource = filterRows({ source });
   replaceOptions(
     kindFilter,
-    [{ value: 'all', label: '전체' }, ...uniqueSorted(rowsBySource.map((obs) => obs.kind)).map((kind) => ({ value: kind, label: kindLabel(kind) }))],
+    [{ value: 'all', label: '全部' }, ...uniqueSorted(rowsBySource.map((obs) => obs.kind)).map((kind) => ({ value: kind, label: kindLabel(kind) }))],
     kindFilter.value || 'all',
   );
 
@@ -400,7 +400,7 @@ function refreshFilterOptions() {
   const rowsByKind = filterRows({ source, kind });
   replaceOptions(
     categoryFilter,
-    [{ value: 'all', label: '전체 카테고리' }, ...uniqueSorted(rowsByKind.map(observationCategory)).map((category) => ({ value: category, label: categoryLabel(category) }))],
+    [{ value: 'all', label: '全部类别' }, ...uniqueSorted(rowsByKind.map(observationCategory)).map((category) => ({ value: category, label: categoryLabel(category) }))],
     categoryFilter.value || 'all',
   );
 
@@ -430,10 +430,10 @@ function renderHeroStatus() {
   card.replaceChildren();
   const okSources = state.status?.sources?.filter((source) => source.ok).length || 0;
   const totalSources = state.status?.sources?.length || 0;
-  appendStatusLine(card, '최근 수집', formatDateTime(state.status?.generated_at));
-  appendStatusLine(card, '총 관측치', `${formatNumber(state.status?.observation_count ?? state.prices.length)}개`);
-  appendStatusLine(card, '소스 상태', `${okSources}/${totalSources} 정상`);
-  appendStatusLine(card, '배포 방식', 'GitHub Pages 정적 대시보드');
+  appendStatusLine(card, '最近采集', formatDateTime(state.status?.generated_at));
+  appendStatusLine(card, '观测总数', `${formatNumber(state.status?.observation_count ?? state.prices.length)}条`);
+  appendStatusLine(card, '来源状态', `${okSources}/${totalSources} 正常`);
+  appendStatusLine(card, '部署方式', 'GitHub Pages 静态仪表盘');
 }
 
 function renderSummaryCards() {
@@ -443,14 +443,14 @@ function renderSummaryCards() {
   const representativeCount = state.series.filter((item) => item.representative).length;
   const categoryCount = uniqueSorted(state.series.flatMap(seriesCategories)).length;
 
-  setText('summary-observations', `${formatNumber(state.status?.observation_count ?? state.prices.length)}개`);
-  setText('summary-observations-detail', `${state.series.length}개 제품/시리즈에서 수집된 정규화 행입니다.`);
-  setText('summary-representatives', `${representativeCount}개`);
-  setText('summary-representatives-detail', `${categoryCount}개 카테고리의 핵심 제품을 기본 차트에 표시합니다.`);
-  setText('summary-spot', `${formatNumber(spotCount)}개`);
-  setText('summary-contract', `${formatNumber(contractCount)}개`);
+  setText('summary-observations', `${formatNumber(state.status?.observation_count ?? state.prices.length)}条`);
+  setText('summary-observations-detail', `${state.series.length}个产品/系列中的标准化记录。`);
+  setText('summary-representatives', `${representativeCount}条`);
+  setText('summary-representatives-detail', `${categoryCount}个类别的核心产品显示在默认图表中。`);
+  setText('summary-spot', `${formatNumber(spotCount)}条`);
+  setText('summary-contract', `${formatNumber(contractCount)}条`);
   setText('summary-generated', formatDateTime(state.status?.generated_at));
-  setText('summary-generated-detail', '표시 시각은 한국시간 기준입니다.');
+  setText('summary-generated-detail', '显示时间以中国标准时间为准。');
 }
 
 function renderStatus() {
@@ -462,15 +462,15 @@ function renderStatus() {
   (state.status?.sources || []).forEach((source) => {
     const warnings = [...(source.warnings || []), ...(source.errors || [])];
     const className = source.ok ? 'gate-item pass' : source.errors?.length ? 'gate-item fail' : 'gate-item block';
-    const detail = `${formatNumber(source.observation_count || 0)}개 관측치${warnings.length ? ` · ${warnings.join('; ')}` : ' · 경고 없음'}`;
+    const detail = `${formatNumber(source.observation_count || 0)}条观测${warnings.length ? ` · ${warnings.join('; ')}` : ' · 无警告'}`;
     const title = document.createDocumentFragment();
-    title.append(sourceLink(source.source, source.urls?.[0]), document.createTextNode(` · ${source.ok ? '정상' : '점검 필요'}`));
+    title.append(sourceLink(source.source, source.urls?.[0]), document.createTextNode(` · ${source.ok ? '正常' : '需要检查'}`));
     appendInfoItem(sourceStatus, title, detail, className);
   });
 
   const caveats = document.getElementById('source-caveats');
   caveats.replaceChildren();
-  (state.status?.caveats || []).forEach((caveat, idx) => appendInfoItem(caveats, `주의 ${idx + 1}`, caveatLabel(caveat)));
+  (state.status?.caveats || []).forEach((caveat, idx) => appendInfoItem(caveats, `注意 ${idx + 1}`, caveatLabel(caveat)));
 }
 
 function groupSeries(rows, requestedMetric) {
@@ -501,13 +501,13 @@ function appendSvgText(parent, text, attributes) {
 
 function dateRangeLabel(rows) {
   const dates = uniqueSorted(rows.map((obs) => obs.date));
-  if (!dates.length) return '날짜 없음';
+  if (!dates.length) return '无日期';
   if (dates.length === 1) return dates[0];
   return `${dates[0]} ~ ${dates[dates.length - 1]}`;
 }
 
 function sourceBucketsForRows(rows) {
-  const seen = new Set(rows.map((obs) => obs.source || 'unknown'));
+  const seen = new Set(rows.map((obs) => obs.source || '未知'));
   const configuredSources = (state.status?.sources || []).map((source) => source.source).filter(Boolean);
   const orderedSources = [
     ...configuredSources.filter((source) => seen.has(source)),
@@ -515,7 +515,7 @@ function sourceBucketsForRows(rows) {
   ];
   return orderedSources.map((source) => ({
     source,
-    rows: rows.filter((obs) => (obs.source || 'unknown') === source),
+    rows: rows.filter((obs) => (obs.source || '未知') === source),
   }));
 }
 
@@ -528,14 +528,14 @@ function renderFilterSummary(rows, sourceCharts, metric, limitValue) {
   const totalGroups = sourceCharts.reduce((total, chart) => total + chart.allGroups.length, 0);
   const nonEmptySources = sourceCharts.filter((chart) => chart.allGroups.length).length;
   const filters = [
-    source === 'all' ? '전체 소스' : sourceLabel(source),
-    kind === 'all' ? '전체 가격 종류' : kindLabel(kind),
-    category === 'all' ? '전체 카테고리' : categoryLabel(category),
-    product === 'representative' ? '대표 제품' : product === 'all' ? '전체 제품' : '선택 제품',
+    source === 'all' ? '全部来源' : sourceLabel(source),
+    kind === 'all' ? '全部价格类型' : kindLabel(kind),
+    category === 'all' ? '全部类别' : categoryLabel(category),
+    product === 'representative' ? '代表产品' : product === 'all' ? '全部产品' : '所选产品',
   ];
-  const limitNote = limitValue === 'all' ? '시리즈 제한 없음' : `소스별 최대 ${limitValue}개 시리즈`;
-  setText('filter-summary', `${filters.join(' · ')} · ${formatNumber(rows.length)}개 관측치 · ${dateRangeLabel(rows)} · ${metricLabel(metric)} · ${limitNote}`);
-  setText('chart-subtitle', `${nonEmptySources}개 소스별 그래프 · ${displayedGroups}개 시리즈 표시 / 조건에 맞는 전체 ${totalGroups}개 시리즈`);
+  const limitNote = limitValue === 'all' ? '不限制系列数量' : `各来源最多 ${limitValue}个系列`;
+  setText('filter-summary', `${filters.join(' · ')} · ${formatNumber(rows.length)}条观测 · ${dateRangeLabel(rows)} · ${metricLabel(metric)} · ${limitNote}`);
+  setText('chart-subtitle', `${nonEmptySources}个来源图表 · ${displayedGroups}个系列 / 全部匹配系列 ${totalGroups}个系列`);
 }
 
 function createPointValueLabels(points, x, y, topY, bottomY, rightX) {
@@ -626,7 +626,7 @@ function createChartSvg(groups) {
       tabindex: 0,
       focusable: true,
       role: 'img',
-      'aria-label': `${group.label} 일별 가격 추이`,
+      'aria-label': `${group.label} 日内价格走势`,
     });
     seriesGroup.style.setProperty('--series-color', color);
     const activateSeries = () => seriesGroup.classList.add('is-active');
@@ -679,7 +679,7 @@ function createLegend(groups) {
 
 function createSourceChartCard(sourceChart) {
   const article = createElement('article', 'source-chart-card');
-  article.setAttribute('aria-label', `${sourceLabel(sourceChart.source)} 가격 추이 그래프`);
+  article.setAttribute('aria-label', `${sourceLabel(sourceChart.source)} 价格走势`);
 
   const heading = createElement('div', 'source-chart-heading');
   const titleBox = document.createElement('div');
@@ -687,10 +687,10 @@ function createSourceChartCard(sourceChart) {
   const title = document.createElement('h3');
   const meta = createElement('p', 'source-chart-meta');
   const badge = createElement('span', 'source-chart-badge');
-  eyebrow.textContent = 'Data source';
+  eyebrow.textContent = '数据来源';
   title.textContent = sourceLabel(sourceChart.source);
-  meta.textContent = `${formatNumber(sourceChart.rows.length)}개 관측치 · ${dateRangeLabel(sourceChart.rows)} · ${sourceChart.groups.length}/${sourceChart.allGroups.length}개 시리즈`;
-  badge.textContent = sourceChart.groups.length ? `${sourceChart.groups.length} series` : 'empty';
+  meta.textContent = `${formatNumber(sourceChart.rows.length)}条观测 · ${dateRangeLabel(sourceChart.rows)} · ${sourceChart.groups.length}/${sourceChart.allGroups.length}个系列`;
+  badge.textContent = sourceChart.groups.length ? `${sourceChart.groups.length} series` : '暂无数据';
   titleBox.append(eyebrow, title, meta);
   heading.append(titleBox, badge);
 
@@ -715,7 +715,7 @@ function renderChart(rows) {
   renderFilterSummary(rows, sourceCharts, metric, limitValue);
   if (!visibleCharts.length) {
     const empty = createElement('div', 'empty-state');
-    empty.textContent = '현재 필터와 지표에 맞는 관측치가 없습니다. 가격 종류 또는 지표를 바꿔보세요.';
+    empty.textContent = '当前筛选条件下没有匹配的观测数据，请尝试更改价格类型或指标。';
     chart.append(empty);
     return;
   }
@@ -738,7 +738,7 @@ function appendBadgeCell(row, value, className = 'badge neutral', url = null) {
     badge.target = '_blank';
     badge.rel = 'noopener noreferrer';
     badge.classList.add('source-link');
-    badge.setAttribute('aria-label', `${value} 원문 출처 열기`);
+    badge.setAttribute('aria-label', `${value} 打开原始来源`);
   }
   badge.textContent = value;
   td.append(badge);
@@ -750,12 +750,12 @@ function renderTable(rows) {
   const body = document.getElementById('latest-table');
   body.replaceChildren();
   const sortedRows = rows.slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))).slice(0, 50);
-  setText('latest-caption', `${formatNumber(sortedRows.length)}개 행 표시 · 선택 지표: ${metricLabel(metric)} · 날짜 역순`);
+  setText('latest-caption', `${formatNumber(sortedRows.length)}条记录 · 所选指标: ${metricLabel(metric)} · 日期倒序`);
   if (!sortedRows.length) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
     td.colSpan = 6;
-    td.textContent = '표시할 최신 관측치가 없습니다.';
+    td.textContent = '没有可显示的最新观测数据。';
     tr.append(td);
     body.append(tr);
     return;
@@ -763,12 +763,12 @@ function renderTable(rows) {
   sortedRows.forEach((obs) => {
     const tr = document.createElement('tr');
     const value = asFiniteNumber(metricFor(obs, metric));
-    appendCell(tr, obs.date || 'unknown');
+    appendCell(tr, obs.date || '未知');
     appendBadgeCell(tr, kindLabel(obs.kind), obs.kind === 'contract' ? 'badge warn' : obs.kind === 'spot' ? 'badge good' : 'badge neutral');
     appendCell(tr, categoryLabel(observationCategory(obs)));
-    appendCell(tr, obs.product_name || obs.product_id || 'unknown');
+    appendCell(tr, obs.product_name || obs.product_id || '未知');
     appendBadgeCell(tr, sourceLabel(obs.source), 'badge neutral', obs.source_url || primarySourceUrl(obs.source));
-    appendCell(tr, value === null ? 'n/a' : `${formatNumber(value)} ${obs.currency || ''}`.trim());
+    appendCell(tr, value === null ? '无数据' : `${formatNumber(value)} ${obs.currency || ''}`.trim());
     body.append(tr);
   });
 }
@@ -784,7 +784,7 @@ function render() {
 
 async function init() {
   try {
-    const [prices, series, status] = await Promise.all(['prices', 'series', 'status'].map(loadJsonFallback));
+    const [prices, series, status] = await Promise.all(['prices', '系列', 'status'].map(loadJsonFallback));
     state.prices = prices.observations || [];
     state.series = series.series || [];
     state.status = status;
@@ -794,7 +794,7 @@ async function init() {
     const chart = document.getElementById('chart');
     chart.replaceChildren();
     const empty = createElement('div', 'empty-state');
-    empty.textContent = `데이터를 불러오지 못했습니다: ${error.message}`;
+    empty.textContent = `数据加载失败：${error.message}`;
     chart.append(empty);
   }
 }
