@@ -156,8 +156,8 @@ def build_public_summary(
         "generatedAt": generated_at,
         "dataAsOf": latest_date,
         "timezone": "UTC",
-        "detailUrl": "https://sonchanggi.github.io/dram-price/",
-        "detailDataUrl": "https://sonchanggi.github.io/dram-price/data/prices.json",
+        "detailUrl": "https://toshinie.github.io/dram-price/",
+        "detailDataUrl": "https://toshinie.github.io/dram-price/data/prices.json",
         "status": {
             "state": state,
             "label": "source degraded" if failed_sources else f"{len(observations)}개 가격 관측치",
@@ -203,7 +203,7 @@ def build_public_summary(
             {"label": "MemoryMarket", "url": "https://www.memorymarket.com/"},
         ],
         "automation": {
-            "workflowUrl": "https://github.com/SonChangGi/dram-price/actions/workflows/update-data.yml",
+            "workflowUrl": "https://github.com/toshiNie/dram-price/actions/workflows/update-data.yml",
             "manualUpdateLabel": "GitHub Actions update-data 수동 실행",
             "tokenPolicy": "Static page keeps no source credentials.",
         },

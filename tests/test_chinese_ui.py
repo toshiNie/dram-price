@@ -18,6 +18,13 @@ class ChineseUiTest(unittest.TestCase):
             text = path.read_text(encoding='utf-8')
             self.assertFalse(any('\uac00' <= char <= '\ud7a3' for char in text), path.name)
 
+    def test_fork_links_point_to_toshinie_project(self):
+        html = (ROOT / 'web' / 'index.html').read_text(encoding='utf-8')
+        model = (ROOT / 'src' / 'dram_tracker' / 'model.py').read_text(encoding='utf-8')
+        self.assertIn('https://github.com/toshiNie/dram-price/actions/workflows/update-data.yml', html)
+        self.assertIn('https://toshinie.github.io/dram-price/', model)
+        self.assertIn('https://github.com/toshiNie/dram-price/actions/workflows/update-data.yml', model)
+
     def test_runtime_labels_are_simplified_chinese(self):
         js = (ROOT / 'web' / 'app.js').read_text(encoding='utf-8')
         self.assertIn("contract: '合约价'", js)
