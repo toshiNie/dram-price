@@ -2,24 +2,21 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-07-18T03:43:17.202446Z",
+  "updatedAt": "2026-07-18T05:11:18.373118Z",
   "targetDate": "2026-07-18",
   "status": "blocked",
   "collectionOutcome": "success",
   "targetVerificationOutcome": "failure",
   "testsOutcome": "skipped",
   "publicationOutcome": "skipped",
-  "warningCount": 2,
+  "warningCount": 0,
   "sourceErrorCount": 0,
-  "details": [
-    "memorymarket warning: DDR4 UDIMM 16GB 3200: failed to fetch https://www.memorymarket.com/price/ews/100224: The read operation timed out",
-    "memorymarket warning: LPDDR4X 64Gb: failed to fetch https://www.memorymarket.com/price/ews/100229: The read operation timed out"
-  ],
+  "details": [],
   "blockingReasons": [
     "target_date_missing_after_collection"
   ],
-  "consecutiveWarningRuns": 2,
-  "consecutiveBlockingFailures": 1,
+  "consecutiveWarningRuns": 0,
+  "consecutiveBlockingFailures": 2,
   "alertThreshold": 3,
   "alertRequired": false,
   "alertReasons": [],
@@ -137,6 +134,16 @@
       "targetDate": "2026-07-18",
       "status": "blocked",
       "warningCount": 2,
+      "sourceErrorCount": 0,
+      "blockingReasons": [
+        "target_date_missing_after_collection"
+      ]
+    },
+    {
+      "checkedAt": "2026-07-18T05:11:18.373118Z",
+      "targetDate": "2026-07-18",
+      "status": "blocked",
+      "warningCount": 0,
       "sourceErrorCount": 0,
       "blockingReasons": [
         "target_date_missing_after_collection"
