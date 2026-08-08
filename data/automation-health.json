@@ -2,37 +2,25 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-08-08T02:28:56.753520Z",
+  "updatedAt": "2026-08-08T03:45:28.865442Z",
   "targetDate": "2026-08-08",
   "status": "blocked",
   "collectionOutcome": "success",
   "targetVerificationOutcome": "failure",
   "testsOutcome": "skipped",
   "publicationOutcome": "skipped",
-  "warningCount": 1,
+  "warningCount": 0,
   "sourceErrorCount": 0,
-  "details": [
-    "memorymarket warning: DDR4 16Gb eTT: failed to fetch https://www.memorymarket.com/price/ews/100246: The read operation timed out"
-  ],
+  "details": [],
   "blockingReasons": [
     "target_date_missing_after_collection"
   ],
-  "consecutiveWarningRuns": 1,
-  "consecutiveBlockingFailures": 1,
+  "consecutiveWarningRuns": 0,
+  "consecutiveBlockingFailures": 2,
   "alertThreshold": 3,
   "alertRequired": false,
   "alertReasons": [],
   "history": [
-    {
-      "checkedAt": "2026-07-26T04:01:22.485094Z",
-      "targetDate": "2026-07-26",
-      "status": "blocked",
-      "warningCount": 0,
-      "sourceErrorCount": 0,
-      "blockingReasons": [
-        "target_date_missing_after_collection"
-      ]
-    },
     {
       "checkedAt": "2026-07-26T05:49:47.424136Z",
       "targetDate": "2026-07-26",
@@ -198,6 +186,16 @@
       "targetDate": "2026-08-08",
       "status": "blocked",
       "warningCount": 1,
+      "sourceErrorCount": 0,
+      "blockingReasons": [
+        "target_date_missing_after_collection"
+      ]
+    },
+    {
+      "checkedAt": "2026-08-08T03:45:28.865442Z",
+      "targetDate": "2026-08-08",
+      "status": "blocked",
+      "warningCount": 0,
       "sourceErrorCount": 0,
       "blockingReasons": [
         "target_date_missing_after_collection"
