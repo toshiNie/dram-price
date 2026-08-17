@@ -2,37 +2,29 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-08-16T04:57:44.363283Z",
-  "targetDate": "2026-08-16",
+  "updatedAt": "2026-08-17T02:00:17.009404Z",
+  "targetDate": "2026-08-17",
   "status": "blocked",
   "collectionOutcome": "success",
   "targetVerificationOutcome": "failure",
   "testsOutcome": "skipped",
   "publicationOutcome": "skipped",
-  "warningCount": 0,
+  "warningCount": 1,
   "sourceErrorCount": 0,
-  "details": [],
+  "details": [
+    "memorymarket warning: DDR4 SODIMM 8GB 3200: failed to fetch https://www.memorymarket.com/price/ews/100227: The read operation timed out"
+  ],
   "blockingReasons": [
     "target_date_missing_after_collection"
   ],
-  "consecutiveWarningRuns": 0,
-  "consecutiveBlockingFailures": 6,
+  "consecutiveWarningRuns": 1,
+  "consecutiveBlockingFailures": 7,
   "alertThreshold": 3,
   "alertRequired": true,
   "alertReasons": [
-    "blocking failures persisted for 6 collection runs"
+    "blocking failures persisted for 7 collection runs"
   ],
   "history": [
-    {
-      "checkedAt": "2026-08-08T05:12:55.696138Z",
-      "targetDate": "2026-08-08",
-      "status": "blocked",
-      "warningCount": 0,
-      "sourceErrorCount": 0,
-      "blockingReasons": [
-        "target_date_missing_after_collection"
-      ]
-    },
     {
       "checkedAt": "2026-08-09T02:37:28.851366Z",
       "targetDate": "2026-08-09",
@@ -208,6 +200,16 @@
       "targetDate": "2026-08-16",
       "status": "blocked",
       "warningCount": 0,
+      "sourceErrorCount": 0,
+      "blockingReasons": [
+        "target_date_missing_after_collection"
+      ]
+    },
+    {
+      "checkedAt": "2026-08-17T02:00:17.009404Z",
+      "targetDate": "2026-08-17",
+      "status": "blocked",
+      "warningCount": 1,
       "sourceErrorCount": 0,
       "blockingReasons": [
         "target_date_missing_after_collection"
