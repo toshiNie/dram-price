@@ -5,16 +5,16 @@
     "Contract prices are monthly/update-date observations; collected_at is not the effective price date."
   ],
   "counts_by_kind": {
-    "contract": 392,
-    "spot": 343,
+    "contract": 400,
+    "spot": 350,
     "spot_proxy": 915
   },
   "counts_by_source": {
     "memorymarket": 915,
-    "trendforce": 735
+    "trendforce": 750
   },
-  "generated_at": "2026-08-19T03:09:59Z",
-  "observation_count": 1650,
+  "generated_at": "2026-08-20T03:09:30Z",
+  "observation_count": 1665,
   "schema_version": 1,
   "sources": [
     {
@@ -30,7 +30,7 @@
     },
     {
       "errors": [],
-      "observation_count": 687,
+      "observation_count": 681,
       "ok": true,
       "source": "memorymarket",
       "urls": [
@@ -76,7 +76,9 @@
         "https://www.memorymarket.com/price/ews/100326",
         "https://www.memorymarket.com/price/ews/100325"
       ],
-      "warnings": []
+      "warnings": [
+        "DDR4 RDIMM 32GB 3200: failed to fetch https://www.memorymarket.com/price/ems/100255: The read operation timed out"
+      ]
     }
   ]
 }
