@@ -2,35 +2,27 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-08-21T03:19:09.079618Z",
-  "targetDate": "2026-08-21",
-  "status": "warning",
+  "updatedAt": "2026-08-22T01:55:17.603064Z",
+  "targetDate": "2026-08-22",
+  "status": "blocked",
   "collectionOutcome": "success",
-  "targetVerificationOutcome": "success",
-  "testsOutcome": "success",
-  "publicationOutcome": "success",
+  "targetVerificationOutcome": "failure",
+  "testsOutcome": "skipped",
+  "publicationOutcome": "skipped",
   "warningCount": 1,
   "sourceErrorCount": 0,
   "details": [
-    "memorymarket warning: DDR4 SODIMM 8GB 3200: failed to fetch https://www.memorymarket.com/price/ews/100227: The read operation timed out"
+    "memorymarket warning: LPDDR4X 64Gb: failed to fetch https://www.memorymarket.com/price/ews/100229: The read operation timed out"
   ],
-  "blockingReasons": [],
-  "consecutiveWarningRuns": 1,
-  "consecutiveBlockingFailures": 0,
+  "blockingReasons": [
+    "target_date_missing_after_collection"
+  ],
+  "consecutiveWarningRuns": 2,
+  "consecutiveBlockingFailures": 1,
   "alertThreshold": 3,
   "alertRequired": false,
   "alertReasons": [],
   "history": [
-    {
-      "checkedAt": "2026-08-13T02:55:22.801740Z",
-      "targetDate": "2026-08-13",
-      "status": "blocked",
-      "warningCount": 1,
-      "sourceErrorCount": 0,
-      "blockingReasons": [
-        "target_date_missing_after_collection"
-      ]
-    },
     {
       "checkedAt": "2026-08-13T04:25:53.020629Z",
       "targetDate": "2026-08-13",
@@ -206,6 +198,16 @@
       "warningCount": 1,
       "sourceErrorCount": 0,
       "blockingReasons": []
+    },
+    {
+      "checkedAt": "2026-08-22T01:55:17.603064Z",
+      "targetDate": "2026-08-22",
+      "status": "blocked",
+      "warningCount": 1,
+      "sourceErrorCount": 0,
+      "blockingReasons": [
+        "target_date_missing_after_collection"
+      ]
     }
   ]
 }
