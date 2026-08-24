@@ -2,42 +2,30 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-08-23T04:58:04.927030Z",
-  "targetDate": "2026-08-23",
+  "updatedAt": "2026-08-24T02:03:30.510006Z",
+  "targetDate": "2026-08-24",
   "status": "blocked",
   "collectionOutcome": "success",
   "targetVerificationOutcome": "failure",
   "testsOutcome": "skipped",
   "publicationOutcome": "skipped",
-  "warningCount": 3,
+  "warningCount": 1,
   "sourceErrorCount": 0,
   "details": [
-    "memorymarket warning: DDR4 RDIMM 32GB 3200: failed to fetch https://www.memorymarket.com/price/ems/100255: The read operation timed out",
-    "memorymarket warning: LPDDR4X 48Gb: failed to fetch https://www.memorymarket.com/price/ews/100182: The read operation timed out",
-    "memorymarket warning: LPDDR5X 96Gb: failed to fetch https://www.memorymarket.com/price/ews/100325: The read operation timed out"
+    "memorymarket warning: DDR5 UDIMM 16GB 5600: failed to fetch https://www.memorymarket.com/price/ews/100268: The read operation timed out"
   ],
   "blockingReasons": [
     "target_date_missing_after_collection"
   ],
-  "consecutiveWarningRuns": 7,
-  "consecutiveBlockingFailures": 6,
+  "consecutiveWarningRuns": 8,
+  "consecutiveBlockingFailures": 7,
   "alertThreshold": 3,
   "alertRequired": true,
   "alertReasons": [
-    "source warnings persisted for 7 collection runs",
-    "blocking failures persisted for 6 collection runs"
+    "source warnings persisted for 8 collection runs",
+    "blocking failures persisted for 7 collection runs"
   ],
   "history": [
-    {
-      "checkedAt": "2026-08-15T04:50:38.388975Z",
-      "targetDate": "2026-08-15",
-      "status": "blocked",
-      "warningCount": 1,
-      "sourceErrorCount": 0,
-      "blockingReasons": [
-        "target_date_missing_after_collection"
-      ]
-    },
     {
       "checkedAt": "2026-08-16T02:04:58.445275Z",
       "targetDate": "2026-08-16",
@@ -213,6 +201,16 @@
       "targetDate": "2026-08-23",
       "status": "blocked",
       "warningCount": 3,
+      "sourceErrorCount": 0,
+      "blockingReasons": [
+        "target_date_missing_after_collection"
+      ]
+    },
+    {
+      "checkedAt": "2026-08-24T02:03:30.510006Z",
+      "targetDate": "2026-08-24",
+      "status": "blocked",
+      "warningCount": 1,
       "sourceErrorCount": 0,
       "blockingReasons": [
         "target_date_missing_after_collection"
