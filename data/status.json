@@ -5,16 +5,16 @@
     "Contract prices are monthly/update-date observations; collected_at is not the effective price date."
   ],
   "counts_by_kind": {
-    "contract": 416,
-    "spot": 364,
-    "spot_proxy": 915
+    "contract": 424,
+    "spot": 371,
+    "spot_proxy": 945
   },
   "counts_by_source": {
-    "memorymarket": 915,
-    "trendforce": 780
+    "memorymarket": 945,
+    "trendforce": 795
   },
-  "generated_at": "2026-08-24T03:15:36Z",
-  "observation_count": 1695,
+  "generated_at": "2026-08-25T03:11:44Z",
+  "observation_count": 1740,
   "schema_version": 1,
   "sources": [
     {
@@ -30,7 +30,7 @@
     },
     {
       "errors": [],
-      "observation_count": 662,
+      "observation_count": 696,
       "ok": true,
       "source": "memorymarket",
       "urls": [
@@ -76,9 +76,7 @@
         "https://www.memorymarket.com/price/ews/100326",
         "https://www.memorymarket.com/price/ews/100325"
       ],
-      "warnings": [
-        "DDR5 UDIMM 16GB 5600: failed to fetch https://www.memorymarket.com/price/ews/100268: The read operation timed out"
-      ]
+      "warnings": []
     }
   ]
 }
