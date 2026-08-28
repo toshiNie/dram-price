@@ -5,16 +5,16 @@
     "Contract prices are monthly/update-date observations; collected_at is not the effective price date."
   ],
   "counts_by_kind": {
-    "contract": 440,
-    "spot": 385,
+    "contract": 448,
+    "spot": 392,
     "spot_proxy": 945
   },
   "counts_by_source": {
     "memorymarket": 945,
-    "trendforce": 825
+    "trendforce": 840
   },
-  "generated_at": "2026-08-27T09:51:19Z",
-  "observation_count": 1770,
+  "generated_at": "2026-08-28T11:25:15Z",
+  "observation_count": 1785,
   "schema_version": 1,
   "sources": [
     {
@@ -30,7 +30,7 @@
     },
     {
       "errors": [],
-      "observation_count": 671,
+      "observation_count": 696,
       "ok": true,
       "source": "memorymarket",
       "urls": [
@@ -76,9 +76,7 @@
         "https://www.memorymarket.com/price/ews/100326",
         "https://www.memorymarket.com/price/ews/100325"
       ],
-      "warnings": [
-        "DDR5 16Gb Major: failed to fetch https://www.memorymarket.com/price/ews/100266: The read operation timed out"
-      ]
+      "warnings": []
     }
   ]
 }
