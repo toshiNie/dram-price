@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-31T05:37:41Z",
+  "generated_at": "2026-09-01T05:11:38Z",
   "schema_version": 1,
   "series": [
     {
@@ -673,6 +673,22 @@
       "product_name": "LPDDR5X 96Gb",
       "representative": false,
       "source": "memorymarket"
+    },
+    {
+      "cadences": [
+        "monthly"
+      ],
+      "categories": [
+        "dram"
+      ],
+      "category": "dram",
+      "kinds": [
+        "contract"
+      ],
+      "product_id": "trendforce-contract-aug-specialty-dram-price-updated-on-8-31-2026-click-here-for-details",
+      "product_name": "Aug. Specialty DRAM price updated on 8/31/2026, click here for details.",
+      "representative": false,
+      "source": "trendforce"
     },
     {
       "cadences": [
