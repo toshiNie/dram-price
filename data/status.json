@@ -5,16 +5,16 @@
     "Contract prices are monthly/update-date observations; collected_at is not the effective price date."
   ],
   "counts_by_kind": {
-    "contract": 496,
-    "spot": 434,
-    "spot_proxy": 975
+    "contract": 504,
+    "spot": 441,
+    "spot_proxy": 1011
   },
   "counts_by_source": {
-    "memorymarket": 975,
-    "trendforce": 930
+    "memorymarket": 1011,
+    "trendforce": 945
   },
-  "generated_at": "2026-09-07T04:44:41Z",
-  "observation_count": 1905,
+  "generated_at": "2026-09-08T04:39:07Z",
+  "observation_count": 1956,
   "schema_version": 1,
   "sources": [
     {
@@ -30,7 +30,7 @@
     },
     {
       "errors": [],
-      "observation_count": 726,
+      "observation_count": 741,
       "ok": true,
       "source": "memorymarket",
       "urls": [
