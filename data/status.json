@@ -5,16 +5,16 @@
     "Contract prices are monthly/update-date observations; collected_at is not the effective price date."
   ],
   "counts_by_kind": {
-    "contract": 512,
-    "spot": 448,
+    "contract": 520,
+    "spot": 455,
     "spot_proxy": 1011
   },
   "counts_by_source": {
     "memorymarket": 1011,
-    "trendforce": 960
+    "trendforce": 975
   },
-  "generated_at": "2026-09-09T04:44:45Z",
-  "observation_count": 1971,
+  "generated_at": "2026-09-10T04:45:07Z",
+  "observation_count": 1986,
   "schema_version": 1,
   "sources": [
     {
@@ -30,7 +30,7 @@
     },
     {
       "errors": [],
-      "observation_count": 724,
+      "observation_count": 741,
       "ok": true,
       "source": "memorymarket",
       "urls": [
@@ -76,9 +76,7 @@
         "https://www.memorymarket.com/price/ews/100326",
         "https://www.memorymarket.com/price/ews/100325"
       ],
-      "warnings": [
-        "DDR5 SODIMM 8GB 5600: failed to fetch https://www.memorymarket.com/price/ews/100320: The read operation timed out"
-      ]
+      "warnings": []
     }
   ]
 }
