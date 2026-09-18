@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-09-17T05:00:28.066373Z",
-  "targetDate": "2026-09-17",
+  "updatedAt": "2026-09-18T04:52:54.001489Z",
+  "targetDate": "2026-09-18",
   "status": "warning",
   "collectionOutcome": "success",
   "targetVerificationOutcome": "success",
@@ -12,25 +12,15 @@
   "warningCount": 1,
   "sourceErrorCount": 0,
   "details": [
-    "memorymarket warning: DDR5 UDIMM 8GB 6000: failed to fetch https://www.memorymarket.com/price/ews/100323: The read operation timed out"
+    "memorymarket warning: DDR4 16Gb 3200: failed to fetch https://www.memorymarket.com/price/ews/100222: The read operation timed out"
   ],
   "blockingReasons": [],
-  "consecutiveWarningRuns": 1,
+  "consecutiveWarningRuns": 2,
   "consecutiveBlockingFailures": 0,
   "alertThreshold": 3,
   "alertRequired": false,
   "alertReasons": [],
   "history": [
-    {
-      "checkedAt": "2026-09-05T07:00:16.654132Z",
-      "targetDate": "2026-09-05",
-      "status": "blocked",
-      "warningCount": 0,
-      "sourceErrorCount": 0,
-      "blockingReasons": [
-        "target_date_missing_after_collection"
-      ]
-    },
     {
       "checkedAt": "2026-09-05T08:23:23.109040Z",
       "targetDate": "2026-09-05",
@@ -198,6 +188,14 @@
     {
       "checkedAt": "2026-09-17T05:00:28.066373Z",
       "targetDate": "2026-09-17",
+      "status": "warning",
+      "warningCount": 1,
+      "sourceErrorCount": 0,
+      "blockingReasons": []
+    },
+    {
+      "checkedAt": "2026-09-18T04:52:54.001489Z",
+      "targetDate": "2026-09-18",
       "status": "warning",
       "warningCount": 1,
       "sourceErrorCount": 0,
