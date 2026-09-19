@@ -2,37 +2,30 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-09-19T07:23:51.923480Z",
+  "updatedAt": "2026-09-19T08:53:49.145955Z",
   "targetDate": "2026-09-19",
   "status": "blocked",
   "collectionOutcome": "success",
   "targetVerificationOutcome": "failure",
   "testsOutcome": "skipped",
   "publicationOutcome": "skipped",
-  "warningCount": 1,
+  "warningCount": 2,
   "sourceErrorCount": 0,
   "details": [
-    "memorymarket warning: DDR5 UDIMM 32GB 5600: failed to fetch https://www.memorymarket.com/price/ews/100270: The read operation timed out"
+    "memorymarket warning: DDR4 8Gb eTT: failed to fetch https://www.memorymarket.com/price/ews/100247: The read operation timed out",
+    "memorymarket warning: DDR5 UDIMM 16GB 6000: failed to fetch https://www.memorymarket.com/price/ews/100269: The read operation timed out"
   ],
   "blockingReasons": [
     "target_date_missing_after_collection"
   ],
-  "consecutiveWarningRuns": 1,
-  "consecutiveBlockingFailures": 2,
+  "consecutiveWarningRuns": 2,
+  "consecutiveBlockingFailures": 3,
   "alertThreshold": 3,
-  "alertRequired": false,
-  "alertReasons": [],
+  "alertRequired": true,
+  "alertReasons": [
+    "blocking failures persisted for 3 collection runs"
+  ],
   "history": [
-    {
-      "checkedAt": "2026-09-06T07:11:20.808593Z",
-      "targetDate": "2026-09-06",
-      "status": "blocked",
-      "warningCount": 0,
-      "sourceErrorCount": 0,
-      "blockingReasons": [
-        "target_date_missing_after_collection"
-      ]
-    },
     {
       "checkedAt": "2026-09-06T08:44:27.589349Z",
       "targetDate": "2026-09-06",
@@ -198,6 +191,16 @@
       "targetDate": "2026-09-19",
       "status": "blocked",
       "warningCount": 1,
+      "sourceErrorCount": 0,
+      "blockingReasons": [
+        "target_date_missing_after_collection"
+      ]
+    },
+    {
+      "checkedAt": "2026-09-19T08:53:49.145955Z",
+      "targetDate": "2026-09-19",
+      "status": "blocked",
+      "warningCount": 2,
       "sourceErrorCount": 0,
       "blockingReasons": [
         "target_date_missing_after_collection"
