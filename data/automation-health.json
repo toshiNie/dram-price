@@ -2,40 +2,30 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-09-19T08:53:49.145955Z",
-  "targetDate": "2026-09-19",
+  "updatedAt": "2026-09-20T04:58:31.476799Z",
+  "targetDate": "2026-09-20",
   "status": "blocked",
   "collectionOutcome": "success",
   "targetVerificationOutcome": "failure",
   "testsOutcome": "skipped",
   "publicationOutcome": "skipped",
-  "warningCount": 2,
+  "warningCount": 1,
   "sourceErrorCount": 0,
   "details": [
-    "memorymarket warning: DDR4 8Gb eTT: failed to fetch https://www.memorymarket.com/price/ews/100247: The read operation timed out",
-    "memorymarket warning: DDR5 UDIMM 16GB 6000: failed to fetch https://www.memorymarket.com/price/ews/100269: The read operation timed out"
+    "memorymarket warning: LPDDR5X 128Gb: failed to fetch https://www.memorymarket.com/price/ews/100324: The read operation timed out"
   ],
   "blockingReasons": [
     "target_date_missing_after_collection"
   ],
-  "consecutiveWarningRuns": 2,
-  "consecutiveBlockingFailures": 3,
+  "consecutiveWarningRuns": 3,
+  "consecutiveBlockingFailures": 4,
   "alertThreshold": 3,
   "alertRequired": true,
   "alertReasons": [
-    "blocking failures persisted for 3 collection runs"
+    "source warnings persisted for 3 collection runs",
+    "blocking failures persisted for 4 collection runs"
   ],
   "history": [
-    {
-      "checkedAt": "2026-09-06T08:44:27.589349Z",
-      "targetDate": "2026-09-06",
-      "status": "blocked",
-      "warningCount": 1,
-      "sourceErrorCount": 0,
-      "blockingReasons": [
-        "target_date_missing_after_collection"
-      ]
-    },
     {
       "checkedAt": "2026-09-07T04:51:11.007826Z",
       "targetDate": "2026-09-07",
@@ -201,6 +191,16 @@
       "targetDate": "2026-09-19",
       "status": "blocked",
       "warningCount": 2,
+      "sourceErrorCount": 0,
+      "blockingReasons": [
+        "target_date_missing_after_collection"
+      ]
+    },
+    {
+      "checkedAt": "2026-09-20T04:58:31.476799Z",
+      "targetDate": "2026-09-20",
+      "status": "blocked",
+      "warningCount": 1,
       "sourceErrorCount": 0,
       "blockingReasons": [
         "target_date_missing_after_collection"
