@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-30T05:34:42Z",
+  "generated_at": "2026-10-01T05:57:44Z",
   "schema_version": 1,
   "series": [
     {
@@ -863,6 +863,22 @@
       ],
       "product_id": "trendforce-contract-may-specialty-dram-price-updated-on-5-29-2026-click-here-for-details",
       "product_name": "May Specialty DRAM price updated on 5/29/2026, click here for details.",
+      "representative": false,
+      "source": "trendforce"
+    },
+    {
+      "cadences": [
+        "monthly"
+      ],
+      "categories": [
+        "dram"
+      ],
+      "category": "dram",
+      "kinds": [
+        "contract"
+      ],
+      "product_id": "trendforce-contract-sep-specialty-dram-price-updated-on-9-30-2026-click-here-for-details",
+      "product_name": "Sep. Specialty DRAM price updated on 9/30/2026, click here for details.",
       "representative": false,
       "source": "trendforce"
     }
