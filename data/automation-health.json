@@ -2,35 +2,27 @@
   "schemaVersion": 1,
   "contract": "dram-automation-health",
   "projectId": "dram",
-  "updatedAt": "2026-10-31T05:46:09.516330Z",
+  "updatedAt": "2026-10-31T08:30:11.702078Z",
   "targetDate": "2026-10-31",
   "status": "blocked",
   "collectionOutcome": "success",
   "targetVerificationOutcome": "failure",
   "testsOutcome": "skipped",
   "publicationOutcome": "skipped",
-  "warningCount": 0,
+  "warningCount": 1,
   "sourceErrorCount": 0,
-  "details": [],
+  "details": [
+    "memorymarket warning: DDR4 UDIMM 16GB 3200: failed to fetch https://www.memorymarket.com/price/ews/100224: The read operation timed out"
+  ],
   "blockingReasons": [
     "target_date_missing_after_collection"
   ],
-  "consecutiveWarningRuns": 0,
-  "consecutiveBlockingFailures": 1,
+  "consecutiveWarningRuns": 1,
+  "consecutiveBlockingFailures": 2,
   "alertThreshold": 3,
   "alertRequired": false,
   "alertReasons": [],
   "history": [
-    {
-      "checkedAt": "2026-10-18T04:41:27.911983Z",
-      "targetDate": "2026-10-18",
-      "status": "blocked",
-      "warningCount": 1,
-      "sourceErrorCount": 0,
-      "blockingReasons": [
-        "target_date_missing_after_collection"
-      ]
-    },
     {
       "checkedAt": "2026-10-18T07:18:22.091194Z",
       "targetDate": "2026-10-18",
@@ -196,6 +188,16 @@
       "targetDate": "2026-10-31",
       "status": "blocked",
       "warningCount": 0,
+      "sourceErrorCount": 0,
+      "blockingReasons": [
+        "target_date_missing_after_collection"
+      ]
+    },
+    {
+      "checkedAt": "2026-10-31T08:30:11.702078Z",
+      "targetDate": "2026-10-31",
+      "status": "blocked",
+      "warningCount": 1,
       "sourceErrorCount": 0,
       "blockingReasons": [
         "target_date_missing_after_collection"
