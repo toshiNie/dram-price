@@ -5,16 +5,16 @@
     "Contract prices are monthly/update-date observations; collected_at is not the effective price date."
   ],
   "counts_by_kind": {
-    "contract": 928,
-    "spot": 812,
-    "spot_proxy": 1293
+    "contract": 936,
+    "spot": 819,
+    "spot_proxy": 1325
   },
   "counts_by_source": {
-    "memorymarket": 1293,
-    "trendforce": 1740
+    "memorymarket": 1325,
+    "trendforce": 1755
   },
-  "generated_at": "2026-11-23T07:41:45Z",
-  "observation_count": 3033,
+  "generated_at": "2026-11-24T09:56:24Z",
+  "observation_count": 3080,
   "schema_version": 1,
   "sources": [
     {
@@ -30,7 +30,7 @@
     },
     {
       "errors": [],
-      "observation_count": 816,
+      "observation_count": 818,
       "ok": true,
       "source": "memorymarket",
       "urls": [
@@ -59,6 +59,8 @@
         "https://www.memorymarket.com/price/ems/100263",
         "https://www.memorymarket.com/price/ems/100264",
         "https://www.memorymarket.com/price/ews/100321",
+        "https://www.memorymarket.com/price/ews/100330",
+        "https://www.memorymarket.com/price/ews/100331",
         "https://www.memorymarket.com/price/ews/100320",
         "https://www.memorymarket.com/price/ews/100268",
         "https://www.memorymarket.com/price/ews/100269",

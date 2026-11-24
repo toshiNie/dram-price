@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T07:41:45Z",
+  "generated_at": "2026-11-24T09:56:24Z",
   "schema_version": 1,
   "series": [
     {
@@ -415,6 +415,38 @@
       ],
       "product_id": "memorymarket-100321",
       "product_name": "DDR5 SODIMM 16GB 5600",
+      "representative": false,
+      "source": "memorymarket"
+    },
+    {
+      "cadences": [
+        "weekly"
+      ],
+      "categories": [
+        "sodimm"
+      ],
+      "category": "sodimm",
+      "kinds": [
+        "spot_proxy"
+      ],
+      "product_id": "memorymarket-100330",
+      "product_name": "DDR5 SODIMM 24GB 5600",
+      "representative": false,
+      "source": "memorymarket"
+    },
+    {
+      "cadences": [
+        "weekly"
+      ],
+      "categories": [
+        "sodimm"
+      ],
+      "category": "sodimm",
+      "kinds": [
+        "spot_proxy"
+      ],
+      "product_id": "memorymarket-100331",
+      "product_name": "DDR5 SODIMM 32GB 5600",
       "representative": false,
       "source": "memorymarket"
     },
